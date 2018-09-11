@@ -1,0 +1,147 @@
+#    -*- mode: org -*-
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:t reveal_control:t
+#+OPTIONS: reveal_mathjax:t reveal_rolling_links:nil reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_width:1600 reveal_height:900
+#+OPTIONS: toc:nil <:nil timestamp:nil email:t reveal_slide_number:"c/t"
+#+REVEAL_MARGIN: 0.1
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 2.5
+#+REVEAL_TRANS: none
+#+REVEAL_THEME: blood
+#+REVEAL_HLEVEL: 1
+#+REVEAL_EXTRA_CSS: ./presentation.css
+#+REVEAL_EXTRA_CSS: ./emoji.css
+#+REVEAL_ROOT: ../reveal.js/
+
+#+TITLE: Operator Overloading
+#+AUTHOR: Ben Deane
+#+DATE: Tuesday September 24th, 2018
+
+#+REVEAL_HTML: <script type="text/javascript" src="./presentation.js"></script>
+
+* Title slide settings                                             :noexport:
+#+BEGIN_SRC emacs-lisp
+(setq org-reveal-title-slide
+(concat "<div class='vertspace6'/>"
+"<h2>Operator Overloading</h2><h3>History, Principles and Practice</h3></div>"
+"<h3>%a / <a href=\"http://twitter.com/ben_deane\">@ben_deane</a></h3>"
+"<h4>CppCon / %d</h4>"))
+(set-face-foreground 'font-lock-comment-face "dark green")
+#+END_SRC
+
+* Motivation
+
+The obvious first question:
+
+Why should we use operators at all?
+
+#+BEGIN_NOTES
+The answer to this question can be found in elementary school.
+#+END_NOTES
+
+** Why?
+#+ATTR_REVEAL: :frag (appear)
+- for concision?
+- for performance?
+- to take advantage of ADL?
+
+** Why?
+Because they convey meaning that named functions don't.
+
+#+BEGIN_SRC c++
+a + b;
+#+END_SRC
+
+#+BEGIN_NOTES
+A grade-school child can intuit properties of addition.
+
+Before we learn the names for mathematical properties - commutativity,
+associativity, closedness, identity, etc. - we intuit these things. And we learn
+this notation.
+
+Addition is perhaps the canonical operator for this reason.
+#+END_NOTES
+
+** Guideline 1
+
+When defining our own operators, we are well-advised to stick to\\
+conventional or intuitive properties.
+
+* The History Part
+
+Or, counterpoint to Guideline 1.
+
+Because things haven't always been this way.
+
+#+ATTR_HTML: :width 500px
+[[file:camera.jpg]]
+
+By Joffboff - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=56389131
+
+#+BEGIN_NOTES
+"What I'm used to" can mean "this is the only thing I've experienced".
+
+This is the Canon Digital Ixus. This was the first digital camera I owned,
+because this was the point when digital cameras really started to get good. Even
+saying "digital" camera sounds today like an anachronism.
+
+Wikipedia tells me this camera was released in 2000. It's an adult.
+#+END_NOTES
+
+** I 3D-printed a Save Icon!
+
+#+ATTR_HTML: :width 500px
+[[file:floppy.png]]
+
+** What is "convention" in history?
+
+What we think of as axiomatic - mathematical notation - is actually changing all
+the time.
+
+- Oresme
+- Recorde
+- Oughtred
+- Leibniz
+
+#+BEGIN_NOTES
+In particular these four mathematicians are famous for inventing and/or
+popularising notations.
+
+But, you say, that's ancient history...
+#+END_NOTES
+
+** What does this mean?
+#+REVEAL_HTML: <div class='vertspace2'></div>
+#+REVEAL_HTML: <h1>/</h1>
+#+ATTR_REVEAL: :frag (appear)
+Are you sure?
+
+#+BEGIN_NOTES
+Until about the turn of the 20th century, : was in common use to mean division.
+We still use it today when expressing ratios.
+
+A "division sign" is the horizontal line with dots either side. e.g. unicode.
+
+A mathematician would probably write a fraction as one number on top of another
+rather than side-by-side separated by a slash.
+
+As far as I can tell this sign means "division" fairly recently and because of
+computer terminal limitations.
+#+END_NOTES
+
+** What do these mean?
+#+REVEAL_HTML: <div class='vertspace2'></div>
+#+REVEAL_HTML: <h1>% ^ ~ |</h1>
+#+ATTR_REVEAL: :frag (appear)
+These are really arbitrary and only with us since about 1970.
+
+** Revised Guideline 1
+
+When defining our own operators, we are well-advised to stick to conventional\\
+or intuitive properties, /where they exist/.
+
+#+REVEAL_HTML: <div class='vertspace2'></div>
+
+Corollary: study history.
+
+/A History of Mathematical Notations/ by Florian Cajori

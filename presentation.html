@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Operator Overloading</title>
+<meta name="author" content="(Ben Deane)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="../reveal.js/css/reveal.css"/>
+
+<link rel="stylesheet" href="../reveal.js/css/theme/blood.css" id="theme"/>
+
+<link rel="stylesheet" href="./presentation.css"/>
+
+<link rel="stylesheet" href="./emoji.css"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = '../reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><div class='vertspace6'/><h2>Operator Overloading</h2><h3>History, Principles and Practice+</h3></div><h3>Ben Deane / <a href="http://twitter.com/ben_deane">@ben_deane</a></h3><h4>CppCon / Tuesday September 24th, 2018</h4>
+</section>
+<script type="text/javascript" src="./presentation.js"></script>
+
+<section>
+<section id="slide-org03fd0c0">
+<h2 id="org03fd0c0">Motivation</h2>
+<p>
+The obvious first question:
+</p>
+
+<p>
+Why should we use operators at all?
+</p>
+
+<aside class="notes">
+<p>
+The answer to this question can be found in elementary school.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgdfeaf6a">
+<h3 id="orgdfeaf6a">Why?</h3>
+<ul>
+<li class="fragment appear">for concision?</li>
+<li class="fragment appear">for performance?</li>
+<li class="fragment appear">to take advantage of ADL?</li>
+
+</ul>
+
+</section>
+<section id="slide-orgd2dbbbc">
+<h3 id="orgd2dbbbc">Why?</h3>
+<p>
+Because they convey meaning that named functions don't.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++">a + b;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+A grade-school child can intuit properties of addition.
+</p>
+
+<p>
+Before we learn the names for mathematical properties - commutativity,
+associativity, closedness, identity, etc. - we intuit these things. And we learn
+this notation.
+</p>
+
+<p>
+Addition is perhaps the canonical operator for this reason.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgf46e0ef">
+<h3 id="orgf46e0ef">Guideline 1</h3>
+<p>
+When defining our own operators, we are well-advised to stick to<br />
+conventional or intuitive properties.
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org06385b4">
+<h2 id="org06385b4">The History Part</h2>
+<p>
+Or, counterpoint to Guideline 1.
+</p>
+
+<p>
+Because things haven't always been this way.
+</p>
+
+
+<div class="figure">
+<p><img src="camera.jpg" alt="camera.jpg" width="500px" />
+</p>
+</div>
+
+<p>
+By Joffboff - Own work, CC BY-SA 4.0, <a href="https://commons.wikimedia.org/w/index.php?curid=56389131">https://commons.wikimedia.org/w/index.php?curid=56389131</a>
+</p>
+
+<aside class="notes">
+<p>
+"What I'm used to" can mean "this is the only thing I've experienced".
+</p>
+
+<p>
+This is the Canon Digital Ixus. This was the first digital camera I owned,
+because this was the point when digital cameras really started to get good. Even
+saying "digital" camera sounds today like an anachronism.
+</p>
+
+<p>
+Wikipedia tells me this camera was released in 2000. It's an adult.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orga5bb991">
+<h3 id="orga5bb991">I 3D-printed a Save Icon!</h3>
+
+<div class="figure">
+<p><img src="floppy.png" alt="floppy.png" width="500px" />
+</p>
+</div>
+
+</section>
+<section id="slide-org60845d0">
+<h3 id="org60845d0">What is "convention" in history?</h3>
+<p>
+What we think of as axiomatic - mathematical notation - is actually changing all
+the time.
+</p>
+
+<ul>
+<li>Oresme</li>
+<li>Recorde</li>
+<li>Oughtred</li>
+<li>Leibniz</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+In particular these four mathematicians are famous for inventing and/or
+popularising notations.
+</p>
+
+<p>
+But, you say, that's ancient history&#x2026;
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org82226f4">
+<h3 id="org82226f4">What does this mean?</h3>
+<div class='vertspace2'></div>
+<h1>/</h1>
+<p class="fragment (appear)">
+Are you sure?
+</p>
+
+<aside class="notes">
+<p>
+Until about the turn of the 20th century, : was in common use to mean division.
+We still use it today when expressing ratios.
+</p>
+
+<p>
+A "division sign" is the horizontal line with dots either side. e.g. unicode.
+</p>
+
+<p>
+A mathematician would probably write a fraction as one number on top of another
+rather than side-by-side separated by a slash.
+</p>
+
+<p>
+As far as I can tell this sign means "division" fairly recently and because of
+computer terminal limitations.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org53d8f6f">
+<h3 id="org53d8f6f">What do these mean?</h3>
+<div class='vertspace2'></div>
+<h1>% ^ ~ |</h1>
+<p class="fragment (appear)">
+These are really arbitrary and only with us since about 1970.
+</p>
+
+</section>
+<section id="slide-orgb184c01">
+<h3 id="orgb184c01">Revised Guideline 1</h3>
+<p>
+When defining our own operators, we are well-advised to stick to conventional<br />
+or intuitive properties, <i>where they exist</i>.
+</p>
+
+<div class='vertspace2'></div>
+
+<p>
+Corollary: study history.
+</p>
+
+<p>
+<i>A History of Mathematical Notations</i> by Florian Cajori
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="../reveal.js/lib/js/head.min.js"></script>
+<script src="../reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: true,
+center: true,
+slideNumber: 'c/t',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+width: 1600,
+height: 900,
+margin: 0.10,
+minScale: 0.50,
+maxScale: 2.50,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: '../reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: '../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '../reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: '../reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>

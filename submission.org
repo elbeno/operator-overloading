@@ -1,0 +1,101 @@
+* Abstract
+Your code would benefit from greater use of operators. Really.
+
+Operator overloading is such an unloved part of C++. It's not new, it's not
+glamorous, it's frequently maligned for "syntax abuse", and often avoided due to
+performance or implementation concerns. But operators deserve more
+consideration! If you're designing types and interfaces, operators have the
+potential to offer concision, clarity, and flexibility, and foster intuition in
+a way that functions can't.
+
+In this talk we'll look at past, current and likely future practices, from the
+humble old operator+ on arithmetic types to new uses like operator/ to
+concatenate paths, and beyond. We'll cover concrete guidelines for principled
+operator usage and the implementation concerns involved.
+
+* Type
+lecture
+* Session Level
+Beginner, Intermediate, Advanced
+* Tags
+APIs
+interfaces
+operators
+overloading
+types
+
+* Material
+slides
+
+* Length
+Optimum Length: one session (60 minutes)
+Minimum Length: one session (60 minutes)
+Maximum Length: one session (60 minutes)
+Permission to record was given.
+
+* Comment
+I'm aware that the outline is potentially a LOT of material - enough to span 2
+hours. For a 1 hour slot I would probably remove most of the pre-C++-17 STL
+material and concentrate the practical parts of the talk on newer features.
+
+* Outline
+
+** Motivation
+- why should we use operators at all?
+- why "syntax abuse" is an unfair accusation
+- operators in history
+
+** Operator Properties
+- should we try to be mathematical?
+- the case of operator+
+- monoids and commutativity
+- regularity of types
+- conventions & communication
+
+** Standard Library Operator Principles
+- assignment, equality, regularity
+- relational operators
+- the spaceship operator
+- operations on iterators
+- operator concepts
+
+** More Operators in the Standard Library
+- strings & paths
+- chrono time operators: affine spaces
+- chrono date's operator/: a mini-DSL
+
+** Overloading for Our Own Purposes
+- what's available to us?
+- precedence and associativity
+- ADL considerations
+- some useful operator conventions
+- friend, member or free?
+- avoiding combinatorial explosions
+- handling operators in generic code
+
+** Contemporary directions
+- new operator evaluation semantics
+- from binary to n-ary: fold expressions
+- EDSL and expression template considerations
+- ranges and dataflow: the pipe operator
+- operator conventions for monadic types
+
+* History
+This talk was given at C++Now 2018, where it was voted best session. The version
+for CppCon will be altered to fit the 1 hour time slot rather than C++Now's 90
+minute slot.
+
+* Video
+https://www.youtube.com/watch?v=HMB9oXFobJc "constexpr ALL the Things", C++Now 2017 (with Jason Turner)
+https://www.youtube.com/watch?v=ojZbFIQSdl8 "Using Types Effectively", CppCon 2016
+
+* Bio
+
+Ben Deane
+@ben_deane
+
+Ben has been writing games for over 20 years, and in C++ for most of that. He is
+currently a Principal Engineer at Blizzard Entertainment where he works on the
+Battle.net team. He likes to play with algorithms, and to make the type system
+work for him, and he’s always looking for useful new techniques in C++. Ben is
+the presenter of several previous C++Now and CppCon talks.
