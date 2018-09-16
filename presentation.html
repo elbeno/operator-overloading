@@ -29,13 +29,81 @@
 <body>
 <div class="reveal">
 <div class="slides">
-<section id="sec-title-slide"><div class='vertspace6'/><h2>Operator Overloading</h2><h3>History, Principles and Practice+</h3></div><h3>Ben Deane / <a href="http://twitter.com/ben_deane">@ben_deane</a></h3><h4>CppCon / Tuesday September 24th, 2018</h4>
+<section id="sec-title-slide"><div class='vertspace6'/><h2>Operator Overloading</h2><h3>History, Principles and Practice</h3></div><h3>Ben Deane / <a href="http://twitter.com/ben_deane">@ben_deane</a></h3><h4>CppCon / Tuesday September 24th, 2018</h4>
 </section>
 <script type="text/javascript" src="./presentation.js"></script>
 
 <section>
-<section id="slide-org03fd0c0">
-<h2 id="org03fd0c0">Motivation</h2>
+<section id="slide-orgf520328">
+<h2 id="orgf520328">First: Operators I'm Not Talking About</h2>
+<ul>
+<li>conversions (e.g. <code>operator int()</code>)</li>
+<li>user-defined literals (e.g. <code>operator ""_km</code>)</li>
+<li><code>operator new</code> and <code>operator delete</code></li>
+<li>assignment</li>
+
+</ul>
+
+<p>
+I'll mostly be talking about "mathematical" operators (arithmetic, bitwise,
+equality, etc).
+</p>
+
+<aside class="notes">
+<p>
+
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org80e892c">
+<h2 id="org80e892c">Operators in C++</h2>
+<p>
+They just aren't very good. Things we can't control:
+</p>
+
+<ul>
+<li class="fragment appear">name</li>
+<li class="fragment appear">lookup rules</li>
+<li class="fragment appear">precedence</li>
+<li class="fragment appear">associativity</li>
+<li class="fragment appear">arity</li>
+<li class="fragment appear">fixity</li>
+<li class="fragment appear">evaluation semantics</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Basically, operators in C++ were fixed to a large extent in 1969 when Ken
+Thompson invented B.
+</p>
+
+<p>
+The syntax is fixed - we don't get to introduce new operators (e.g. power).
+Precedence rules often give us a very short list of operators to choose from if
+we want to overload. Associativity can be a problem in overloading some
+operators. We don't get arity choices (if you think this is an odd thing to
+want, consider the utility in making some binary operators unary). We don't get
+a choice whether to make an operator infix, prefix or postfix. For some
+operators evaluation semantics are fixed.
+</p>
+
+<p>
+OK, so why do we care and what can we do about it with the power that we do
+have?
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org6185f1d">
+<h2 id="org6185f1d">Motivation</h2>
 <p>
 The obvious first question:
 </p>
@@ -44,33 +112,36 @@ The obvious first question:
 Why should we use operators at all?
 </p>
 
+</section>
+<section id="slide-orgf8da2da">
+<h3 id="orgf8da2da">Why?</h3>
+<ul>
+<li class="fragment appear">for concision?</li>
+<li class="fragment appear">for performance?</li>
+<li class="fragment appear">to take advantage of ADL?</li>
+<li class="fragment appear">because we can?</li>
+<li class="fragment appear">because we have to (equality/ordering)?</li>
+
+</ul>
+
 <aside class="notes">
 <p>
-The answer to this question can be found in elementary school.
+Sometimes we "have to" overload operators because we want to put our types in
+for example a set.
 </p>
 
 </aside>
 
 </section>
-<section id="slide-orgdfeaf6a">
-<h3 id="orgdfeaf6a">Why?</h3>
-<ul>
-<li class="fragment appear">for concision?</li>
-<li class="fragment appear">for performance?</li>
-<li class="fragment appear">to take advantage of ADL?</li>
-
-</ul>
-
-</section>
-<section id="slide-orgd2dbbbc">
-<h3 id="orgd2dbbbc">Why?</h3>
+<section id="slide-orge8d741f">
+<h3 id="orge8d741f">Why?</h3>
 <p>
 Because they convey meaning that named functions don't.
 </p>
 
 <div class="org-src-container">
 
-<pre  class="src src-c++">a + b;
+<pre  class="src src-c++">a + b + c;
 </pre>
 </div>
 
@@ -92,20 +163,32 @@ Addition is perhaps the canonical operator for this reason.
 </aside>
 
 </section>
-<section id="slide-orgf46e0ef">
-<h3 id="orgf46e0ef">Guideline 1</h3>
+<section id="slide-org7312205">
+<h3 id="org7312205">Say this another way&#x2026;</h3>
+<blockquote nil>
 <p>
-When defining our own operators, we are well-advised to stick to<br />
-conventional or intuitive properties.
+"It is probably wise to use operator overloading primarily to mimic conventional
+use of operators."
+</p>
+<div></div><div class='author'>
+<p>
+&#x2013; Bjarne Stroustrup, <i>The C++ Programming Language</i>
+</p>
+</div>
+</blockquote>
+
+<aside class="notes">
+<p>
+We had better be conventional. But what is convention?
 </p>
 
+</aside>
+
 </section>
-</section>
-<section>
-<section id="slide-org06385b4">
-<h2 id="org06385b4">The History Part</h2>
+<section id="slide-org05a15c2">
+<h3 id="org05a15c2">The History Part</h3>
 <p>
-Or, counterpoint to Guideline 1.
+Or, counterpoint to "stick to convention".
 </p>
 
 <p>
@@ -118,9 +201,7 @@ Because things haven't always been this way.
 </p>
 </div>
 
-<p>
-By Joffboff - Own work, CC BY-SA 4.0, <a href="https://commons.wikimedia.org/w/index.php?curid=56389131">https://commons.wikimedia.org/w/index.php?curid=56389131</a>
-</p>
+<font size="3">By Joffboff - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=56389131</font>
 
 <aside class="notes">
 <p>
@@ -134,40 +215,48 @@ saying "digital" camera sounds today like an anachronism.
 </p>
 
 <p>
-Wikipedia tells me this camera was released in 2000. It's an adult.
+Wikipedia tells me this camera was released in 2000. It's older than some C++
+programmers.
 </p>
 
 </aside>
 
 </section>
-<section id="slide-orga5bb991">
-<h3 id="orga5bb991">I 3D-printed a Save Icon!</h3>
+<section id="slide-orgf387581">
+<h3 id="orgf387581">I 3D-printed a Save Icon!</h3>
 
 <div class="figure">
 <p><img src="floppy.png" alt="floppy.png" width="500px" />
 </p>
 </div>
 
-</section>
-<section id="slide-org60845d0">
-<h3 id="org60845d0">What is "convention" in history?</h3>
+<aside class="notes">
 <p>
-What we think of as axiomatic - mathematical notation - is actually changing all
-the time.
+Another example of "lost convention"?
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgf371f37">
+<h3 id="orgf371f37">What is "convention" in history?</h3>
+<p>
+What we may think of as "axiomatic" - mathematical notation -<br />
+is actually changing all the time.
 </p>
 
 <ul>
-<li>Oresme</li>
-<li>Recorde</li>
-<li>Oughtred</li>
-<li>Leibniz</li>
+<li>Nicole Oresme</li>
+<li>Robert Recorde</li>
+<li>William Oughtred</li>
+<li>Gottfried Wilhelm Leibniz</li>
 
 </ul>
 
 <aside class="notes">
 <p>
-In particular these four mathematicians are famous for inventing and/or
-popularising notations.
+In particular these four mathematicians are famous for (among other things)
+inventing and/or popularising notations.
 </p>
 
 <p>
@@ -177,10 +266,10 @@ But, you say, that's ancient history&#x2026;
 </aside>
 
 </section>
-<section id="slide-org82226f4">
-<h3 id="org82226f4">What does this mean?</h3>
+<section id="slide-orga8fb8b6">
+<h3 id="orga8fb8b6">What's the answer?</h3>
 <div class='vertspace2'></div>
-<h1>/</h1>
+<h1>355 / 113 = ?</h1>
 <p class="fragment (appear)">
 Are you sure?
 </p>
@@ -208,17 +297,17 @@ computer terminal limitations.
 </aside>
 
 </section>
-<section id="slide-org53d8f6f">
-<h3 id="org53d8f6f">What do these mean?</h3>
+<section id="slide-org7ce50aa">
+<h3 id="org7ce50aa">What do these mean?</h3>
 <div class='vertspace2'></div>
 <h1>% ^ ~ |</h1>
 <p class="fragment (appear)">
-These are really arbitrary and only with us since about 1970.
+These are really arbitrary and only a little older than me.
 </p>
 
 </section>
-<section id="slide-orgb184c01">
-<h3 id="orgb184c01">Revised Guideline 1</h3>
+<section id="slide-orgdffb38c">
+<h3 id="orgdffb38c">Revised Guideline</h3>
 <p>
 When defining our own operators, we are well-advised to stick to conventional<br />
 or intuitive properties, <i>where they exist</i>.
@@ -232,6 +321,698 @@ Corollary: study history.
 
 <p>
 <i>A History of Mathematical Notations</i> by Florian Cajori
+</p>
+
+</section>
+<section id="slide-org1f257e1">
+<h3 id="org1f257e1">Operator overloading advice</h3>
+<div class='vertspace2'></div>
+<blockquote nil>
+<p>"When in doubt, do as the <code>int</code>s do."</p>
+<div></div><div class='author'>
+<p>
+&#x2013; Scott Meyers, <i>More Effective C++</i>
+</p>
+</div>
+</blockquote>
+
+<aside class="notes">
+<p>
+Arguments against operator overloading:
+</p>
+
+<p>
+People don't like re-using operators to mean arbitrary, nonconventional things.
+(cf trademarks)
+</p>
+
+<p>
+People don't like the potential for operators to impose performance costs
+through hidden computation and through binary functions calls rather than n-ary.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgf94dee2">
+<h3 id="orgf94dee2">Operator overloading</h3>
+<div class='vertspace2'></div>
+<p>
+When in doubt, do what <code>operator+</code> does?
+</p>
+
+<aside class="notes">
+<p>
+Maybe we should try to find the most "normal" operator and see if we can divine
+some guidelines for overloading.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org62e9a6e">
+<h3 id="org62e9a6e"><code>operator+</code> Properties</h3>
+<div class='vertspace2'></div>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<tr>
+<th class="org-left">Property</td>
+<th class="org-left">Math(s)</td>
+<th class="org-left">C++</td>
+</tr>
+<tr>
+<td class="org-left"><div class="fragment" data-fragment-index="1">Closed</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="1">&#x2714;</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="5">&#x2717; (overflow)</div></td>
+</tr>
+<tr>
+<td class="org-left"><div class="fragment" data-fragment-index="2">Associative</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="2">&#x2714;</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="6">&#x2717; (floating point)</div></td>
+</tr>
+<tr>
+<td class="org-left"><div class="fragment" data-fragment-index="3">Commutative</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="3">&#x2714;</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="7">&#x2717; (strings)</div></td>
+</tr>
+<tr>
+<td class="org-left"><div class="fragment" data-fragment-index="4">Has Identity</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="4">&#x2714;</div></td>
+<td class="org-left"><div class="fragment" data-fragment-index="8" style="float: inline-start;">&#x2714;</div><div class="fragment" data-fragment-index="13">&#x2714;(+0.0, -0.0!)</div></td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<p>
+What are the properties of addition?
+</p>
+
+<p>
+It has all these properties when we apply it to an unsigned int, but&#x2026;
+</p>
+
+<p>
+This tells me that programming has its own conventions separate from the
+conventions of mathematics.
+</p>
+
+<p>
+On the other hand, we do try to follow mathematical conventions mostly.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org640dc1a">
+<h3 id="org640dc1a">Operators in Compiler History</h3>
+<font size="3">(from https://jeffreykegler.github.io/personal/timeline_v3)</font>
+
+<p>
+1956: The IT Compiler
+</p>
+<blockquote  class="fragment appear">
+<p>
+"&#x2026;the first really <i>useful</i> compiler."
+</p>
+<div></div><div class='author'>
+<p>
+&#x2013; Donald E Knuth
+</p>
+</div>
+</blockquote>
+
+<br/>
+<p class="fragment appear">
+But it didn't have operator precedence as we know it today.
+</p>
+<blockquote  class="fragment appear">
+<p>
+"The lack of operator priority &#x2026; in the IT language was the most frequent
+single cause of errors by the users of that compiler."
+</p>
+<div></div><div class='author'>
+<p>
+&#x2013; Donald E Knuth
+</p>
+</div>
+</blockquote>
+
+<aside class="notes">
+<p>
+IT (Internal Translator) was a compiler for the IBM 650. Perhaps the first
+compiler that we would recognize as one in the modern sense. (Translating
+human-readable source into machine code.)
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org1c9aa50">
+<h3 id="org1c9aa50">Why?</h3>
+<p>
+Because operators convey meaning that names don't.
+</p>
+
+<ul>
+<li>associativity/commutativity</li>
+<li>precedence</li>
+<li>distributive law</li>
+
+</ul>
+
+<p>
+Because operators allow concision/readability.
+</p>
+
+<p>
+Because operators allow expressions to be manipulated.
+</p>
+
+<aside class="notes">
+<p>
+Operators convey meaning not only about operations but also about the types they
+act upon. Closedness is one example.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgab53e67">
+<h2 id="orgab53e67">Mathematical Principles</h2>
+<p>
+Which mathematical conventions should we follow, then?
+</p>
+
+<p>
+A selection, in approximate order of importance&#x2026;
+</p>
+
+</section>
+<section id="slide-org30582f4">
+<h3 id="org30582f4">Probably the most important</h3>
+<ul>
+<li>Logical contrariety of <code>==</code> and <code>!=</code></li>
+
+</ul>
+
+<p>
+Break this one at your peril!
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">==</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">T</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">T</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #a020f0;">noexcept</span>
+<span style="color: #707183;">{</span>
+  <span style="color: #0000ff;">...</span>
+<span style="color: #707183;">}</span>
+
+<span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">!=</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">T</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">T</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #a020f0;">noexcept</span>
+<span style="color: #707183;">{</span>
+  <span style="color: #a020f0;">return</span> !<span style="color: #7388d6;">(</span>x==y<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+If you break this, you will not pass a code review from me.
+</p>
+
+<p>
+If you make an equality operator, you had better make inequality mean its
+opposite.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org068a624">
+<h3 id="org068a624">Very important</h3>
+<ul>
+<li>Associativity of <code>+</code> and <code>*</code></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++">assert<span style="color: #707183;">(</span><span style="color: #7388d6;">(</span>a + b<span style="color: #7388d6;">)</span> + c == a + <span style="color: #7388d6;">(</span>b + c<span style="color: #7388d6;">)</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<p>
+Almost all mathematical objects we work with in C++ obey this, so if you violate
+this, your code could be very surprising.
+</p>
+
+<aside class="notes">
+<p>
+Unfortunately we don't yet have the machinery in C++ to take advantage of this
+fully. As we will see in a couple of slides' time.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org2a314b5">
+<h3 id="org2a314b5">Still fairly important</h3>
+<ul>
+<li>Law of the excluded middle</li>
+
+</ul>
+
+<p>
+Either a given proposition is true, or its negation is true.<br />
+<i>tertium non datur</i>
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++">assert<span style="color: #707183;">(</span>a &gt; b || a &lt;= b<span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<p>
+Mostly true (but notably not for <code>float</code>).
+</p>
+
+<aside class="notes">
+<p>
+Mostly for ordering. This makes thinking about ordering a whole lot easier.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org6ad13c6">
+<h3 id="org6ad13c6">Nice to have</h3>
+<div class='vertspace2'></div>
+
+<ul>
+<li>Commutativity of <code>+</code></li>
+
+</ul>
+
+<p>
+I think it's <i>probably</i> too late to "fix" <code>std::string</code> by giving it <code>operator*</code>.
+</p>
+
+<p>
+(ಠ_ಠ at <code>std::reduce</code>)
+</p>
+
+<aside class="notes">
+<p>
+Commutativity is a nice property in general, and unfortunately it's required for
+<code>reduce</code>. Mathematically only associativity is required for <code>reduce</code> but the
+standard requires commutativity. I think because of implementation concerns
+around vectorization.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org492a147">
+<h3 id="org492a147">Nice to have</h3>
+<div class='vertspace2'></div>
+
+<ul>
+<li>Distribution of <code>*</code> over <code>+</code></li>
+
+</ul>
+
+<p>
+This (or something similar) helps users of your code to manipulate expressions.
+</p>
+
+<aside class="notes">
+<p>
+These last two properties allude to a mathematical structure called a ring.
+</p>
+
+<p>
+We could also cite AND and XOR operations as forming another ring.
+</p>
+
+<p>
+Think also about de Morgan's laws. We are used to manipulating expressions in
+certain ways - particularly arithmetic and boolean expressions. If we choose to
+overload operators for our own types that are supposed to behave in arithmetic
+ways, it behooves us to follow the expectations of users.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orga300cc7">
+<h3 id="orga300cc7">Can go either way</h3>
+<div class='vertspace2'></div>
+
+<ul>
+<li>Closedness of <code>+</code></li>
+
+</ul>
+
+<p>
+But if you don't have closure over your type, you had better know why.
+</p>
+
+<aside class="notes">
+<p>
+This is one of those things that is maybe so obvious that we don't think about
+it. After all, in C++ even the division operator is closed over integral types
+(if we discount division by zero).
+</p>
+
+<p>
+But in fact breaking this rule can be good design. And that leads us to affine
+spaces.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgb429283">
+<h2 id="orgb429283">Affine Spaces</h2>
+<div class='vertspace2'></div>
+
+
+<div class="figure">
+<p><object type="image/svg+xml" data="affine_space.svg" class="org-svg" width="500px">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<aside class="notes">
+<p>
+An affine space is a vector space that makes a distinction between a point
+(position) and a vector (translation).
+</p>
+
+<p>
+Now, it's quite possible - even likely - that we can represent these things the
+same way. And it's likely that the space has an origin. We could say that points
+are the same as vectors, measured from the origin.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org403ea72">
+<h3 id="org403ea72">Affine Spaces</h3>
+<p>
+Types and operators working together as a team.
+</p>
+
+<ul>
+<li>a set of points (values of type 1)</li>
+<li>difference between two points is a vector (value of type 2)</li>
+<li>operations that relate points to vectors</li>
+<li>no need for an origin</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+But an affine space relaxes that requirement. In an affine space we have no need
+for an origin. And it's useful to use two different types to represent these
+ideas.
+</p>
+
+<p>
+Because when we use two different types, it lets us see more clearly what the
+useful operations are between those types.
+</p>
+
+<p>
+The standard library has a couple of good examples.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgb560c42">
+<h3 id="orgb560c42"><code>chrono</code>: <code>time_point</code> and <code>duration</code></h3>
+<p>
+In <code>chrono</code>, time is a one-dimensional affine space.
+</p>
+
+<ul>
+<li><code>time_point</code> is a point</li>
+<li><code>duration</code> is a vector</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+It is meaningless to add points. Subtracting points from each other yields a
+vector - <code>duration</code> is the "difference type". And vectors can be added to
+points.
+</p>
+
+<p>
+Vectors may be added to or subtracted from each other. So we can think of
+addition as closed over vectors.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org2ebbf03">
+<h3 id="org2ebbf03"><code>chrono</code> as an affine space</h3>
+<p>
+Thinking of it this way helps us to define the operations that make sense.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #228b22;">time_point</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">+</span><span style="color: #707183;">(</span><span style="color: #228b22;">time_point</span>, duration<span style="color: #707183;">)</span>;
+<span style="color: #228b22;">time_point</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">-</span><span style="color: #707183;">(</span><span style="color: #228b22;">time_point</span>, duration<span style="color: #707183;">)</span>;
+
+<span style="color: #228b22;">duration</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">-</span><span style="color: #707183;">(</span><span style="color: #228b22;">time_point</span>, <span style="color: #228b22;">time_point</span><span style="color: #707183;">)</span>;
+
+<span style="color: #228b22;">duration</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">+</span><span style="color: #707183;">(</span><span style="color: #228b22;">duration</span>, <span style="color: #228b22;">duration</span><span style="color: #707183;">)</span>;
+<span style="color: #228b22;">duration</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">-</span><span style="color: #707183;">(</span><span style="color: #228b22;">duration</span>, <span style="color: #228b22;">duration</span><span style="color: #707183;">)</span>;
+<span style="color: #228b22;">duration</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">*</span><span style="color: #707183;">(</span><span style="color: #228b22;">duration</span>, rep<span style="color: #707183;">)</span>;
+<span style="color: #228b22;">duration</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">/</span><span style="color: #707183;">(</span><span style="color: #228b22;">duration</span>, rep<span style="color: #707183;">)</span>;
+
+<span style="color: #228b22;">duration</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">%</span><span style="color: #707183;">(</span><span style="color: #228b22;">duration</span>, <span style="color: #228b22;">duration</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Addition (subtraction) is closed over vectors.
+</p>
+
+<p>
+We can add/subtract vectors to points. But when we subtract a point from another
+point, we get a vector.
+</p>
+
+<p>
+We can scale vectors.
+</p>
+
+<p>
+Since we're in one dimension, it makes sense to compute the remainder when
+dividing one vector by another.
+</p>
+
+<p>
+If we have more than one dimension, maybe e.g. dot means something, and maybe
+we could offer that functionality.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org4149f23">
+<h2 id="org4149f23">Why Be Conventional?</h2>
+<p>
+If our types are mathematical (and they almost always are, in some way),
+identifying the properties helps us.
+</p>
+
+<p>
+Helps users with:
+</p>
+<ul>
+<li>intuition</li>
+<li>manipulation</li>
+<li>properties</li>
+
+</ul>
+
+<p>
+Helps implementers/designers identify:
+</p>
+<ul>
+<li>a complete basis</li>
+<li>minimality vs convenience</li>
+<li>efficiency</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+This is why we want to be conventional.
+</p>
+
+<p>
+It helps users by analogy with what they know. It helps them intuit properties.
+</p>
+
+<p>
+More importantly, as implementers it puts our types and operations on a firm
+foundation. It helps us identify missing parts of the design. It helps us think
+about which operations are likely to be fast and which are not. It helps us
+explore the design space of our types. It helps us know what is a minimal set of
+basis operations and which operations are for convenience and can be implemented
+in terms of the others.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org59dbe59">
+<h2 id="org59dbe59">Why Be Conventional?</h2>
+<p>
+It helps us take advantage of compositionality built into the standard library
+and the language.
+</p>
+
+<ul>
+<li><code>std::accumulate</code>, <code>std::reduce</code>, etc</li>
+<li>fold expressions</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org505790a">
+<h2 id="org505790a">Straying from Convention</h2>
+<blockquote nil>
+<p>
+"When I use a word," Humpty Dumpty said, in rather a scornful tone, "it means
+just what I choose it to mean—neither more nor less." "The question is," said
+Alice, "whether you can make words mean so many different things." "The question
+is," said Humpty Dumpty, "which is to be master—that's all.”
+</p>
+<div></div><div class='author'>
+<p>
+&#x2013; Lewis Carroll, Through the Looking Glass
+</p>
+</div>
+</blockquote>
+
+</section>
+<section id="slide-org873252a">
+<h3 id="org873252a">DSLs</h3>
+
+</section>
+<section id="slide-org7ea00ad">
+<h3 id="org7ea00ad"><code>chrono</code> dates</h3>
+
+</section>
+<section id="slide-org4631cf2">
+<h3 id="org4631cf2">[Boost.]SML</h3>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf5a7bfa">
+<h2 id="orgf5a7bfa">Notes</h2>
+<p>
+#include &lt;algorithm&gt;
+#include &lt;compare&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;type_traits&gt;
+</p>
+
+<p>
+namespace std {
+</p>
+
+<p>
+template&lt; class InputIt1, class InputIt2, class Cmp &gt;
+constexpr auto lexicographical_compare_3way( InputIt1 b1, InputIt1 e1,
+                                             InputIt2 b2, InputIt2 e2,
+                                             Cmp comp)
+-&gt; std::common_comparison_category_t&lt;decltype(comp(*b1, *b2)), std::strong_ordering&gt;;
+}
+</p>
+
+<p>
+class CIString {
+	std::string s;
+</p>
+
+<p>
+public:
+	CIString(std::string _s): s(_s) {};
+</p>
+
+<p>
+    // functions want to be free!
+    friend inline std::strong_ordering operator&lt;=&gt;(const CIString&amp; x, const CIString&amp; y);
+};
+</p>
+
+<p>
+struct ci_compare_less
+{
+    std::strong_ordering operator()(char x, char y) const
+    {
+        const auto diff = std::toupper(x) - std::toupper(y);
+        return diff &lt; 0 ?
+          std::strong_ordering::less :
+          diff &gt; 0 ?
+            std::strong_ordering::greater :
+            std::strong_ordering::equivalent;
+    }
+};
+</p>
+
+<p>
+// operator&lt;=&gt;
+inline std::strong_ordering operator&lt;=&gt;(const CIString&amp; x, const CIString&amp; y)
+{
+    return std::lexicographical_compare_3way(x.s.cbegin(), x.s.cend(),
+        y.s.cbegin(), y.s.cend(), ci_compare_less{});
+}
+</p>
+
+<p>
+// You can use this function to write any tests you may want.
+auto tests() {
+    using namespace std::literals;
+    auto s1 = "HELLO, WORLD1"s;
+    auto s2 = "hello, world2"s;
+</p>
+
+<p>
+auto lhs = std::is_lt(CIString{s1} &lt;=&gt; s2);
+auto rhs = std::is_lt(s1 &lt;=&gt; CIString{s2});
+</p>
+
+<p>
+    return lhs &amp;&amp; rhs;
+};
+</p>
+
+<p>
+int main() {
+	return tests();
+}
 </p>
 </section>
 </section>

@@ -2,7 +2,7 @@
 #+OPTIONS: reveal_center:t reveal_progress:t reveal_history:t reveal_control:t
 #+OPTIONS: reveal_mathjax:t reveal_rolling_links:nil reveal_keyboard:t reveal_overview:t num:nil
 #+OPTIONS: reveal_width:1600 reveal_height:900
-#+OPTIONS: toc:nil <:nil timestamp:nil email:t reveal_slide_number:"c/t"
+#+OPTIONS: toc:nil ^:nil <:nil timestamp:nil email:t reveal_slide_number:"c/t"
 #+REVEAL_MARGIN: 0.1
 #+REVEAL_MIN_SCALE: 0.5
 #+REVEAL_MAX_SCALE: 2.5
@@ -29,27 +29,73 @@
 (set-face-foreground 'font-lock-comment-face "dark green")
 #+END_SRC
 
+* First: Operators I'm Not Talking About
+
+ - conversions (e.g. ~operator int()~)
+ - user-defined literals (e.g. ~operator ""_km~)
+ - ~operator new~ and ~operator delete~
+ - assignment
+
+I'll mostly be talking about "mathematical" operators (arithmetic, bitwise,
+equality, etc).
+
+#+BEGIN_NOTES
+
+#+END_NOTES
+
+* Operators in C++
+
+They just aren't very good. Things we can't control:
+
+#+ATTR_REVEAL: :frag (appear)
+ - name
+ - lookup rules
+ - precedence
+ - associativity
+ - arity
+ - fixity
+ - evaluation semantics
+
+#+BEGIN_NOTES
+Basically, operators in C++ were fixed to a large extent in 1969 when Ken
+Thompson invented B.
+
+The syntax is fixed - we don't get to introduce new operators (e.g. power).
+Precedence rules often give us a very short list of operators to choose from if
+we want to overload. Associativity can be a problem in overloading some
+operators. We don't get arity choices (if you think this is an odd thing to
+want, consider the utility in making some binary operators unary). We don't get
+a choice whether to make an operator infix, prefix or postfix. For some
+operators evaluation semantics are fixed.
+
+OK, so why do we care and what can we do about it with the power that we do
+have?
+#+END_NOTES
+
 * Motivation
 
 The obvious first question:
 
 Why should we use operators at all?
 
-#+BEGIN_NOTES
-The answer to this question can be found in elementary school.
-#+END_NOTES
-
 ** Why?
 #+ATTR_REVEAL: :frag (appear)
-- for concision?
-- for performance?
-- to take advantage of ADL?
+ - for concision?
+ - for performance?
+ - to take advantage of ADL?
+ - because we can?
+ - because we have to (equality/ordering)?
+
+#+BEGIN_NOTES
+Sometimes we "have to" overload operators because we want to put our types in
+for example a set.
+#+END_NOTES
 
 ** Why?
 Because they convey meaning that named functions don't.
 
 #+BEGIN_SRC c++
-a + b;
+a + b + c;
 #+END_SRC
 
 #+BEGIN_NOTES
@@ -62,21 +108,28 @@ this notation.
 Addition is perhaps the canonical operator for this reason.
 #+END_NOTES
 
-** Guideline 1
+** Say this another way...
+#+BEGIN_QUOTE
+"It is probably wise to use operator overloading primarily to mimic conventional
+use of operators."
+#+REVEAL_HTML: <div></div><div class='author'>
+-- Bjarne Stroustrup, /The C++ Programming Language/
+#+REVEAL_HTML: </div>
+#+END_QUOTE
 
-When defining our own operators, we are well-advised to stick to\\
-conventional or intuitive properties.
+#+BEGIN_NOTES
+We had better be conventional. But what is convention?
+#+END_NOTES
 
-* The History Part
-
-Or, counterpoint to Guideline 1.
+** The History Part
+Or, counterpoint to "stick to convention".
 
 Because things haven't always been this way.
 
 #+ATTR_HTML: :width 500px
 [[file:camera.jpg]]
 
-By Joffboff - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=56389131
+#+REVEAL_HTML: <font size="3">By Joffboff - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=56389131</font>
 
 #+BEGIN_NOTES
 "What I'm used to" can mean "this is the only thing I've experienced".
@@ -85,7 +138,8 @@ This is the Canon Digital Ixus. This was the first digital camera I owned,
 because this was the point when digital cameras really started to get good. Even
 saying "digital" camera sounds today like an anachronism.
 
-Wikipedia tells me this camera was released in 2000. It's an adult.
+Wikipedia tells me this camera was released in 2000. It's older than some C++
+programmers.
 #+END_NOTES
 
 ** I 3D-printed a Save Icon!
@@ -93,26 +147,30 @@ Wikipedia tells me this camera was released in 2000. It's an adult.
 #+ATTR_HTML: :width 500px
 [[file:floppy.png]]
 
+#+BEGIN_NOTES
+Another example of "lost convention"?
+#+END_NOTES
+
 ** What is "convention" in history?
 
-What we think of as axiomatic - mathematical notation - is actually changing all
-the time.
+What we may think of as "axiomatic" - mathematical notation -\\
+is actually changing all the time.
 
-- Oresme
-- Recorde
-- Oughtred
-- Leibniz
+ - Nicole Oresme
+ - Robert Recorde
+ - William Oughtred
+ - Gottfried Wilhelm Leibniz
 
 #+BEGIN_NOTES
-In particular these four mathematicians are famous for inventing and/or
-popularising notations.
+In particular these four mathematicians are famous for (among other things)
+inventing and/or popularising notations.
 
 But, you say, that's ancient history...
 #+END_NOTES
 
-** What does this mean?
+** What's the answer?
 #+REVEAL_HTML: <div class='vertspace2'></div>
-#+REVEAL_HTML: <h1>/</h1>
+#+REVEAL_HTML: <h1>355 / 113 = ?</h1>
 #+ATTR_REVEAL: :frag (appear)
 Are you sure?
 
@@ -133,9 +191,9 @@ computer terminal limitations.
 #+REVEAL_HTML: <div class='vertspace2'></div>
 #+REVEAL_HTML: <h1>% ^ ~ |</h1>
 #+ATTR_REVEAL: :frag (appear)
-These are really arbitrary and only with us since about 1970.
+These are really arbitrary and only a little older than me.
 
-** Revised Guideline 1
+** Revised Guideline
 
 When defining our own operators, we are well-advised to stick to conventional\\
 or intuitive properties, /where they exist/.
@@ -145,3 +203,433 @@ or intuitive properties, /where they exist/.
 Corollary: study history.
 
 /A History of Mathematical Notations/ by Florian Cajori
+
+** Operator overloading advice
+#+REVEAL_HTML: <div class='vertspace2'></div>
+#+BEGIN_QUOTE
+#+REVEAL_HTML: <p>"When in doubt, do as the <code>int</code>s do."</p>
+#+REVEAL_HTML: <div></div><div class='author'>
+-- Scott Meyers, /More Effective C++/
+#+REVEAL_HTML: </div>
+#+END_QUOTE
+
+#+BEGIN_NOTES
+Arguments against operator overloading:
+
+People don't like re-using operators to mean arbitrary, nonconventional things.
+(cf trademarks)
+
+People don't like the potential for operators to impose performance costs
+through hidden computation and through binary functions calls rather than n-ary.
+#+END_NOTES
+
+** Operator overloading
+#+REVEAL_HTML: <div class='vertspace2'></div>
+When in doubt, do what ~operator+~ does?
+
+#+BEGIN_NOTES
+Maybe we should try to find the most "normal" operator and see if we can divine
+some guidelines for overloading.
+#+END_NOTES
+
+** ~operator+~ Properties
+#+REVEAL_HTML: <div class='vertspace2'></div>
+#+REVEAL_HTML: <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+#+REVEAL_HTML: <tr>
+#+REVEAL_HTML: <th class="org-left">Property</td>
+#+REVEAL_HTML: <th class="org-left">Math(s)</td>
+#+REVEAL_HTML: <th class="org-left">C++</td>
+#+REVEAL_HTML: </tr>
+#+REVEAL_HTML: <tr>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="1">Closed</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="1">&#x2714;</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="5">&#x2717; (overflow)</div></td>
+#+REVEAL_HTML: </tr>
+#+REVEAL_HTML: <tr>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="2">Associative</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="2">&#x2714;</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="6">&#x2717; (floating point)</div></td>
+#+REVEAL_HTML: </tr>
+#+REVEAL_HTML: <tr>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="3">Commutative</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="3">&#x2714;</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="7">&#x2717; (strings)</div></td>
+#+REVEAL_HTML: </tr>
+#+REVEAL_HTML: <tr>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="4">Has Identity</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="4">&#x2714;</div></td>
+#+REVEAL_HTML: <td class="org-left"><div class="fragment" data-fragment-index="8" style="float: inline-start;">&#x2714;</div><div class="fragment" data-fragment-index="13">&#x2714;(+0.0, -0.0!)</div></td>
+#+REVEAL_HTML: </tr>
+#+REVEAL_HTML: </tbody>
+#+REVEAL_HTML: </table>
+
+#+BEGIN_NOTES
+What are the properties of addition?
+
+It has all these properties when we apply it to an unsigned int, but...
+
+This tells me that programming has its own conventions separate from the
+conventions of mathematics.
+
+On the other hand, we do try to follow mathematical conventions mostly.
+#+END_NOTES
+
+** Operators in Compiler History
+#+REVEAL_HTML: <font size="3">(from https://jeffreykegler.github.io/personal/timeline_v3)</font>
+
+1956: The IT Compiler
+#+ATTR_REVEAL: :frag appear
+#+BEGIN_QUOTE
+"...the first really /useful/ compiler."
+#+REVEAL_HTML: <div></div><div class='author'>
+-- Donald E Knuth
+#+REVEAL_HTML: </div>
+#+END_QUOTE
+
+#+REVEAL_HTML: <br/>
+#+ATTR_REVEAL: :frag appear
+But it didn't have operator precedence as we know it today.
+#+ATTR_REVEAL: :frag appear
+#+BEGIN_QUOTE
+"The lack of operator priority ... in the IT language was the most frequent
+single cause of errors by the users of that compiler."
+#+REVEAL_HTML: <div></div><div class='author'>
+-- Donald E Knuth
+#+REVEAL_HTML: </div>
+#+END_QUOTE
+
+#+BEGIN_NOTES
+IT (Internal Translator) was a compiler for the IBM 650. Perhaps the first
+compiler that we would recognize as one in the modern sense. (Translating
+human-readable source into machine code.)
+#+END_NOTES
+
+** Why?
+Because operators convey meaning that names don't.
+
+ - associativity/commutativity
+ - precedence
+ - distributive law
+
+Because operators allow concision/readability.
+
+Because operators allow expressions to be manipulated.
+
+#+BEGIN_NOTES
+Operators convey meaning not only about operations but also about the types they
+act upon. Closedness is one example.
+#+END_NOTES
+
+* Mathematical Principles
+
+Which mathematical conventions should we follow, then?
+
+A selection, in approximate order of importance...
+
+** Probably the most important
+
+ - Logical contrariety of ~==~ and ~!=~
+
+Break this one at your peril!
+#+BEGIN_SRC c++
+bool operator==(const T& x, const T& y) noexcept
+{
+  ...
+}
+
+bool operator!=(const T& x, const T& y) noexcept
+{
+  return !(x==y);
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+If you break this, you will not pass a code review from me.
+
+If you make an equality operator, you had better make inequality mean its
+opposite.
+#+END_NOTES
+
+** Very important
+
+ - Associativity of ~+~ and ~*~
+
+#+BEGIN_SRC c++
+assert((a + b) + c == a + (b + c));
+#+END_SRC
+
+Almost all mathematical objects we work with in C++ obey this, so if you violate
+this, your code could be very surprising.
+
+#+BEGIN_NOTES
+Unfortunately we don't yet have the machinery in C++ to take advantage of this
+fully. As we will see in a couple of slides' time.
+#+END_NOTES
+
+** Still fairly important
+
+ - Law of the excluded middle
+
+Either a given proposition is true, or its negation is true.\\
+/tertium non datur/
+
+#+BEGIN_SRC c++
+assert(a > b || a <= b);
+#+END_SRC
+
+Mostly true (but notably not for ~float~).
+
+#+BEGIN_NOTES
+Mostly for ordering. This makes thinking about ordering a whole lot easier.
+#+END_NOTES
+
+** Nice to have
+#+REVEAL_HTML: <div class='vertspace2'></div>
+
+ - Commutativity of ~+~
+
+I think it's /probably/ too late to "fix" ~std::string~ by giving it ~operator*~.
+
+(ಠ_ಠ at ~std::reduce~)
+
+#+BEGIN_NOTES
+Commutativity is a nice property in general, and unfortunately it's required for
+~reduce~. Mathematically only associativity is required for ~reduce~ but the
+standard requires commutativity. I think because of implementation concerns
+around vectorization.
+#+END_NOTES
+
+** Nice to have
+#+REVEAL_HTML: <div class='vertspace2'></div>
+
+ - Distribution of ~*~ over ~+~
+
+This (or something similar) helps users of your code to manipulate expressions.
+
+#+BEGIN_NOTES
+These last two properties allude to a mathematical structure called a ring.
+
+We could also cite AND and XOR operations as forming another ring.
+
+Think also about de Morgan's laws. We are used to manipulating expressions in
+certain ways - particularly arithmetic and boolean expressions. If we choose to
+overload operators for our own types that are supposed to behave in arithmetic
+ways, it behooves us to follow the expectations of users.
+#+END_NOTES
+
+** Can go either way
+#+REVEAL_HTML: <div class='vertspace2'></div>
+
+ - Closedness of ~+~
+
+But if you don't have closure over your type, you had better know why.
+
+#+BEGIN_NOTES
+This is one of those things that is maybe so obvious that we don't think about
+it. After all, in C++ even the division operator is closed over integral types
+(if we discount division by zero).
+
+But in fact breaking this rule can be good design. And that leads us to affine
+spaces.
+#+END_NOTES
+
+* Affine Spaces
+#+REVEAL_HTML: <div class='vertspace2'></div>
+
+#+ATTR_HTML: :width 500px
+[[file:affine_space.svg]]
+
+#+BEGIN_NOTES
+An affine space is a vector space that makes a distinction between a point
+(position) and a vector (translation).
+
+Now, it's quite possible - even likely - that we can represent these things the
+same way. And it's likely that the space has an origin. We could say that points
+are the same as vectors, measured from the origin.
+#+END_NOTES
+
+** Affine Spaces
+
+Types and operators working together as a team.
+
+ - a set of points (values of type 1)
+ - difference between two points is a vector (value of type 2)
+ - operations that relate points to vectors
+ - no need for an origin
+
+#+BEGIN_NOTES
+But an affine space relaxes that requirement. In an affine space we have no need
+for an origin. And it's useful to use two different types to represent these
+ideas.
+
+Because when we use two different types, it lets us see more clearly what the
+useful operations are between those types.
+
+The standard library has a couple of good examples.
+#+END_NOTES
+
+** ~chrono~: ~time_point~ and ~duration~
+
+In ~chrono~, time is a one-dimensional affine space.
+
+ - ~time_point~ is a point
+ - ~duration~ is a vector
+
+#+BEGIN_NOTES
+It is meaningless to add points. Subtracting points from each other yields a
+vector - ~duration~ is the "difference type". And vectors can be added to
+points.
+
+Vectors may be added to or subtracted from each other. So we can think of
+addition as closed over vectors.
+#+END_NOTES
+
+** ~chrono~ as an affine space
+
+Thinking of it this way helps us to define the operations that make sense.
+
+#+BEGIN_SRC c++
+time_point operator+(time_point, duration);
+time_point operator-(time_point, duration);
+
+duration operator-(time_point, time_point);
+
+duration operator+(duration, duration);
+duration operator-(duration, duration);
+duration operator*(duration, rep);
+duration operator/(duration, rep);
+
+duration operator%(duration, duration);
+#+END_SRC
+
+#+BEGIN_NOTES
+Addition (subtraction) is closed over vectors.
+
+We can add/subtract vectors to points. But when we subtract a point from another
+point, we get a vector.
+
+We can scale vectors.
+
+Since we're in one dimension, it makes sense to compute the remainder when
+dividing one vector by another.
+
+If we have more than one dimension, maybe e.g. dot means something, and maybe
+we could offer that functionality.
+#+END_NOTES
+
+* Why Be Conventional?
+
+Helps users with:
+ - intuition
+ - manipulation
+ - properties
+
+Helps implementers/designers identify:
+ - a complete basis
+ - minimality vs convenience
+ - efficiency
+
+#+BEGIN_NOTES
+If our types are mathematical (and they almost always are, in some way),
+identifying the properties helps us.
+
+This is why we want to be conventional.
+
+It helps users by analogy with what they know. It helps them intuit properties.
+
+More importantly, as implementers it puts our types and operations on a firm
+foundation. It helps us identify missing parts of the design. It helps us think
+about which operations are likely to be fast and which are not. It helps us
+explore the design space of our types. It helps us know what is a minimal set of
+basis operations and which operations are for convenience and can be implemented
+in terms of the others.
+#+END_NOTES
+
+* Why Be Conventional?
+
+It helps us take advantage of compositionality built into\\
+the standard library and the language.
+
+ - ~std::accumulate~, ~std::reduce~, etc
+ - fold expressions
+
+* Straying from Convention
+
+#+BEGIN_QUOTE
+"When I use a word," Humpty Dumpty said, in rather a scornful tone, "it means
+just what I choose it to mean—neither more nor less." "The question is," said
+Alice, "whether you can make words mean so many different things." "The question
+is," said Humpty Dumpty, "which is to be master—that's all.”
+#+REVEAL_HTML: <div></div><div class='author'>
+-- Lewis Carroll, Through the Looking Glass
+#+REVEAL_HTML: </div>
+#+END_QUOTE
+
+** DSLs
+
+** ~chrono~ dates
+
+** [Boost.]SML
+
+* Notes
+
+#include <algorithm>
+#include <compare>
+#include <iostream>
+#include <string>
+#include <type_traits>
+
+namespace std {
+
+template< class InputIt1, class InputIt2, class Cmp >
+constexpr auto lexicographical_compare_3way( InputIt1 b1, InputIt1 e1,
+                                             InputIt2 b2, InputIt2 e2,
+                                             Cmp comp)
+-> std::common_comparison_category_t<decltype(comp(*b1, *b2)), std::strong_ordering>;
+}
+
+class CIString {
+	std::string s;
+
+public:
+	CIString(std::string _s): s(_s) {};
+
+    // functions want to be free!
+    friend inline std::strong_ordering operator<=>(const CIString& x, const CIString& y);
+};
+
+struct ci_compare_less
+{
+    std::strong_ordering operator()(char x, char y) const
+    {
+        const auto diff = std::toupper(x) - std::toupper(y);
+        return diff < 0 ?
+          std::strong_ordering::less :
+          diff > 0 ?
+            std::strong_ordering::greater :
+            std::strong_ordering::equivalent;
+    }
+};
+
+// operator<=>
+inline std::strong_ordering operator<=>(const CIString& x, const CIString& y)
+{
+    return std::lexicographical_compare_3way(x.s.cbegin(), x.s.cend(),
+        y.s.cbegin(), y.s.cend(), ci_compare_less{});
+}
+
+// You can use this function to write any tests you may want.
+auto tests() {
+    using namespace std::literals;
+    auto s1 = "HELLO, WORLD1"s;
+    auto s2 = "hello, world2"s;
+
+    auto lhs = std::is_lt(CIString{s1} <=> s2);
+    auto rhs = std::is_lt(s1 <=> CIString{s2});
+
+    return lhs && rhs;
+};
+
+int main() {
+	return tests();
+}
