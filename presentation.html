@@ -29,13 +29,13 @@
 <body>
 <div class="reveal">
 <div class="slides">
-<section id="sec-title-slide"><div class='vertspace6'/><h2>Operator Overloading</h2><h3>History, Principles and Practice</h3></div><h3>Ben Deane / <a href="http://twitter.com/ben_deane">@ben_deane</a></h3><h4>CppCon / Tuesday September 24th, 2018</h4>
+<section id="sec-title-slide"><div class='vertspace6'/><h2>Operator Overloading</h2><h3>History, Principles and Practice</h3></div><h3>Ben Deane / <a href="http://twitter.com/ben_deane">@ben_deane</a></h3><h4>CppCon / Tuesday September 25th, 2018</h4>
 </section>
 <script type="text/javascript" src="./presentation.js"></script>
 
 <section>
-<section id="slide-orgf520328">
-<h2 id="orgf520328">First: Operators I'm Not Talking About</h2>
+<section id="slide-orgb7537e6">
+<h2 id="orgb7537e6">First: Operators I'm Not Talking About</h2>
 <ul>
 <li>conversions (e.g. <code>operator int()</code>)</li>
 <li>user-defined literals (e.g. <code>operator ""_km</code>)</li>
@@ -51,7 +51,7 @@ equality, etc).
 
 <aside class="notes">
 <p>
-
+I'm going to be talking about <i>why</i> we should embrace operator overloading.
 </p>
 
 </aside>
@@ -59,15 +59,14 @@ equality, etc).
 </section>
 </section>
 <section>
-<section id="slide-org80e892c">
-<h2 id="org80e892c">Operators in C++</h2>
+<section id="slide-orgdebd18b">
+<h2 id="orgdebd18b">Operators in C++</h2>
 <p>
 They just aren't very good. Things we can't control:
 </p>
 
 <ul>
 <li class="fragment appear">name</li>
-<li class="fragment appear">lookup rules</li>
 <li class="fragment appear">precedence</li>
 <li class="fragment appear">associativity</li>
 <li class="fragment appear">arity</li>
@@ -87,9 +86,10 @@ The syntax is fixed - we don't get to introduce new operators (e.g. power).
 Precedence rules often give us a very short list of operators to choose from if
 we want to overload. Associativity can be a problem in overloading some
 operators. We don't get arity choices (if you think this is an odd thing to
-want, consider the utility in making some binary operators unary). We don't get
-a choice whether to make an operator infix, prefix or postfix. For some
-operators evaluation semantics are fixed.
+want, consider the utility in making some binary operators unary and read Ken
+Iverson's 1979 Turing Award Lecture). We don't get a choice whether to make an
+operator infix, prefix or postfix. For some operators evaluation semantics are
+fixed.
 </p>
 
 <p>
@@ -102,8 +102,8 @@ have?
 </section>
 </section>
 <section>
-<section id="slide-org6185f1d">
-<h2 id="org6185f1d">Motivation</h2>
+<section id="slide-org4e6a9be">
+<h2 id="org4e6a9be">Motivation</h2>
 <p>
 The obvious first question:
 </p>
@@ -113,8 +113,8 @@ Why should we use operators at all?
 </p>
 
 </section>
-<section id="slide-orgf8da2da">
-<h3 id="orgf8da2da">Why?</h3>
+<section id="slide-org1a36eee">
+<h3 id="org1a36eee">Why?</h3>
 <ul>
 <li class="fragment appear">for concision?</li>
 <li class="fragment appear">for performance?</li>
@@ -126,17 +126,21 @@ Why should we use operators at all?
 
 <aside class="notes">
 <p>
+For some or all of these reasons?
+</p>
+
+<p>
 Sometimes we "have to" overload operators because we want to put our types in
-for example a set.
+a particular type of container that requires it, for example a set.
 </p>
 
 </aside>
 
 </section>
-<section id="slide-orge8d741f">
-<h3 id="orge8d741f">Why?</h3>
+<section id="slide-orgcf85ab8">
+<h3 id="orgcf85ab8">Why?</h3>
 <p>
-Because they convey meaning that named functions don't.
+Because operators <i>convey meaning about types</i> that named functions don't.
 </p>
 
 <div class="org-src-container">
@@ -163,8 +167,8 @@ Addition is perhaps the canonical operator for this reason.
 </aside>
 
 </section>
-<section id="slide-org7312205">
-<h3 id="org7312205">Say this another way&#x2026;</h3>
+<section id="slide-orgdf4e5cc">
+<h3 id="orgdf4e5cc">Say this another way&#x2026;</h3>
 <blockquote nil>
 <p>
 "It is probably wise to use operator overloading primarily to mimic conventional
@@ -185,8 +189,8 @@ We had better be conventional. But what is convention?
 </aside>
 
 </section>
-<section id="slide-org05a15c2">
-<h3 id="org05a15c2">The History Part</h3>
+<section id="slide-org30b2e0e">
+<h3 id="org30b2e0e">The History Part</h3>
 <p>
 Or, counterpoint to "stick to convention".
 </p>
@@ -205,13 +209,16 @@ Because things haven't always been this way.
 
 <aside class="notes">
 <p>
-"What I'm used to" can mean "this is the only thing I've experienced".
+"What I'm used to" can mean "this is the only thing I've experienced". One
+person's convention can be unknown to another. Often things are just a matter of
+familiarity.
 </p>
 
 <p>
-This is the Canon Digital Ixus. This was the first digital camera I owned,
-because this was the point when digital cameras really started to get good. Even
-saying "digital" camera sounds today like an anachronism.
+This is the Canon Digital Ixus (Elph). This was the first digital camera I
+owned, because this was the point when digital cameras really started to get
+good. Even saying "digital" camera sounds today like an anachronism. The only
+time this sees use any more is when people need to save their phone battery.
 </p>
 
 <p>
@@ -222,8 +229,8 @@ programmers.
 </aside>
 
 </section>
-<section id="slide-orgf387581">
-<h3 id="orgf387581">I 3D-printed a Save Icon!</h3>
+<section id="slide-org551d85b">
+<h3 id="org551d85b">I 3D-printed a Save Icon!</h3>
 
 <div class="figure">
 <p><img src="floppy.png" alt="floppy.png" width="500px" />
@@ -232,14 +239,14 @@ programmers.
 
 <aside class="notes">
 <p>
-Another example of "lost convention"?
+Convention is weird, isn't it?
 </p>
 
 </aside>
 
 </section>
-<section id="slide-orgf371f37">
-<h3 id="orgf371f37">What is "convention" in history?</h3>
+<section id="slide-org7a0ef64">
+<h3 id="org7a0ef64">What is "convention" in history?</h3>
 <p>
 What we may think of as "axiomatic" - mathematical notation -<br />
 is actually changing all the time.
@@ -266,8 +273,8 @@ But, you say, that's ancient history&#x2026;
 </aside>
 
 </section>
-<section id="slide-orga8fb8b6">
-<h3 id="orga8fb8b6">What's the answer?</h3>
+<section id="slide-org350bb07">
+<h3 id="org350bb07">What's the answer?</h3>
 <div class='vertspace2'></div>
 <h1>355 / 113 = ?</h1>
 <p class="fragment (appear)">
@@ -297,17 +304,24 @@ computer terminal limitations.
 </aside>
 
 </section>
-<section id="slide-org7ce50aa">
-<h3 id="org7ce50aa">What do these mean?</h3>
+<section id="slide-org0d812bc">
+<h3 id="org0d812bc">What do these mean?</h3>
 <div class='vertspace2'></div>
 <h1>% ^ ~ |</h1>
 <p class="fragment (appear)">
 These are really arbitrary and only a little older than me.
 </p>
 
+<aside class="notes">
+<p>
+As far as I can tell, these are only about 50 years old.
+</p>
+
+</aside>
+
 </section>
-<section id="slide-orgdffb38c">
-<h3 id="orgdffb38c">Revised Guideline</h3>
+<section id="slide-orgcc3c0e6">
+<h3 id="orgcc3c0e6">Revised Guideline</h3>
 <p>
 When defining our own operators, we are well-advised to stick to conventional<br />
 or intuitive properties, <i>where they exist</i>.
@@ -323,9 +337,16 @@ Corollary: study history.
 <i>A History of Mathematical Notations</i> by Florian Cajori
 </p>
 
+<aside class="notes">
+<p>
+
+</p>
+
+</aside>
+
 </section>
-<section id="slide-org1f257e1">
-<h3 id="org1f257e1">Operator overloading advice</h3>
+<section id="slide-org5b3c9f3">
+<h3 id="org5b3c9f3">Operator overloading advice</h3>
 <div class='vertspace2'></div>
 <blockquote nil>
 <p>"When in doubt, do as the <code>int</code>s do."</p>
@@ -338,24 +359,29 @@ Corollary: study history.
 
 <aside class="notes">
 <p>
-Arguments against operator overloading:
+<code>int</code> is well understood, and <code>int</code> is fast.
 </p>
 
 <p>
-People don't like re-using operators to mean arbitrary, nonconventional things.
-(cf trademarks)
+What are the principle reasons we might not like operator overloading? I think 2
+reasons.
 </p>
 
 <p>
-People don't like the potential for operators to impose performance costs
-through hidden computation and through binary functions calls rather than n-ary.
+I don't like re-using operators to mean arbitrary, nonconventional things. (cf
+trademarks)
+</p>
+
+<p>
+I don't like the potential for operators to impose performance costs through
+hidden computation and through binary functions calls rather than n-ary.
 </p>
 
 </aside>
 
 </section>
-<section id="slide-orgf94dee2">
-<h3 id="orgf94dee2">Operator overloading</h3>
+<section id="slide-orgc137a50">
+<h3 id="orgc137a50">Operator overloading</h3>
 <div class='vertspace2'></div>
 <p>
 When in doubt, do what <code>operator+</code> does?
@@ -370,8 +396,8 @@ some guidelines for overloading.
 </aside>
 
 </section>
-<section id="slide-org62e9a6e">
-<h3 id="org62e9a6e"><code>operator+</code> Properties</h3>
+<section id="slide-org6e4bac8">
+<h3 id="org6e4bac8"><code>operator+</code> Properties</h3>
 <div class='vertspace2'></div>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <tr>
@@ -423,8 +449,8 @@ On the other hand, we do try to follow mathematical conventions mostly.
 </aside>
 
 </section>
-<section id="slide-org640dc1a">
-<h3 id="org640dc1a">Operators in Compiler History</h3>
+<section id="slide-org6790287">
+<h3 id="org6790287">Operators in Compiler History</h3>
 <font size="3">(from https://jeffreykegler.github.io/personal/timeline_v3)</font>
 
 <p>
@@ -467,8 +493,8 @@ human-readable source into machine code.)
 </aside>
 
 </section>
-<section id="slide-org1c9aa50">
-<h3 id="org1c9aa50">Why?</h3>
+<section id="slide-orgcd2f8d0">
+<h3 id="orgcd2f8d0">Why?</h3>
 <p>
 Because operators convey meaning that names don't.
 </p>
@@ -490,8 +516,21 @@ Because operators allow expressions to be manipulated.
 
 <aside class="notes">
 <p>
-Operators convey meaning not only about operations but also about the types they
-act upon. Closedness is one example.
+I hope I've given a pretty good answer to "why should we use operators?"
+</p>
+
+<p>
+Because operators convey meaning not only about <i>operations</i> but about the
+<i>types</i> they act upon.
+</p>
+
+<p>
+Because well-used operators allow readability through concision.
+</p>
+
+<p>
+Because operators are at the heart of <i>expressions</i> and expressions allow
+manipulation to provide better readability and perhaps performance.
 </p>
 
 </aside>
@@ -499,8 +538,8 @@ act upon. Closedness is one example.
 </section>
 </section>
 <section>
-<section id="slide-orgab53e67">
-<h2 id="orgab53e67">Mathematical Principles</h2>
+<section id="slide-org1020184">
+<h2 id="org1020184">Mathematical Principles</h2>
 <p>
 Which mathematical conventions should we follow, then?
 </p>
@@ -509,9 +548,16 @@ Which mathematical conventions should we follow, then?
 A selection, in approximate order of importance&#x2026;
 </p>
 
+<aside class="notes">
+<p>
+Here are some conventions I think are important.
+</p>
+
+</aside>
+
 </section>
-<section id="slide-org30582f4">
-<h3 id="org30582f4">Probably the most important</h3>
+<section id="slide-org33759b2">
+<h3 id="org33759b2">Probably the most important</h3>
 <ul>
 <li>Logical contrariety of <code>==</code> and <code>!=</code></li>
 
@@ -536,7 +582,8 @@ Break this one at your peril!
 
 <aside class="notes">
 <p>
-If you break this, you will not pass a code review from me.
+If you break the opposite-ness of equality and inequality, you will not pass a
+code review from me.
 </p>
 
 <p>
@@ -547,8 +594,8 @@ opposite.
 </aside>
 
 </section>
-<section id="slide-org068a624">
-<h3 id="org068a624">Very important</h3>
+<section id="slide-org09ad718">
+<h3 id="org09ad718">Very important</h3>
 <ul>
 <li>Associativity of <code>+</code> and <code>*</code></li>
 
@@ -567,6 +614,11 @@ this, your code could be very surprising.
 
 <aside class="notes">
 <p>
+Associativity is one of the key properties that allows us to manipulate
+expressions.
+</p>
+
+<p>
 Unfortunately we don't yet have the machinery in C++ to take advantage of this
 fully. As we will see in a couple of slides' time.
 </p>
@@ -574,8 +626,8 @@ fully. As we will see in a couple of slides' time.
 </aside>
 
 </section>
-<section id="slide-org2a314b5">
-<h3 id="org2a314b5">Still fairly important</h3>
+<section id="slide-org41a4fce">
+<h3 id="org41a4fce">Still fairly important</h3>
 <ul>
 <li>Law of the excluded middle</li>
 
@@ -598,14 +650,14 @@ Mostly true (but notably not for <code>float</code>).
 
 <aside class="notes">
 <p>
-Mostly for ordering. This makes thinking about ordering a whole lot easier.
+For ordering: this makes thinking about ordering a whole lot easier.
 </p>
 
 </aside>
 
 </section>
-<section id="slide-org6ad13c6">
-<h3 id="org6ad13c6">Nice to have</h3>
+<section id="slide-orgf84aca8">
+<h3 id="orgf84aca8">Nice to have</h3>
 <div class='vertspace2'></div>
 
 <ul>
@@ -632,8 +684,8 @@ around vectorization.
 </aside>
 
 </section>
-<section id="slide-org492a147">
-<h3 id="org492a147">Nice to have</h3>
+<section id="slide-orge23c71e">
+<h3 id="orge23c71e">Nice to have</h3>
 <div class='vertspace2'></div>
 
 <ul>
@@ -664,8 +716,8 @@ ways, it behooves us to follow the expectations of users.
 </aside>
 
 </section>
-<section id="slide-orga300cc7">
-<h3 id="orga300cc7">Can go either way</h3>
+<section id="slide-orgae3125a">
+<h3 id="orgae3125a">Can go either way</h3>
 <div class='vertspace2'></div>
 
 <ul>
@@ -680,12 +732,13 @@ But if you don't have closure over your type, you had better know why.
 <aside class="notes">
 <p>
 This is one of those things that is maybe so obvious that we don't think about
-it. After all, in C++ even the division operator is closed over integral types
-(if we discount division by zero).
+it. When you add together two things, you get a thing of the same type. After
+all, in C++, unlike in mathematics, even the division operator is closed over
+integral types.
 </p>
 
 <p>
-But in fact breaking this rule can be good design. And that leads us to affine
+But in fact relaxing this rule can be good design. And that leads us to affine
 spaces.
 </p>
 
@@ -694,8 +747,8 @@ spaces.
 </section>
 </section>
 <section>
-<section id="slide-orgb429283">
-<h2 id="orgb429283">Affine Spaces</h2>
+<section id="slide-org0c7d51f">
+<h2 id="org0c7d51f">Affine Spaces</h2>
 <div class='vertspace2'></div>
 
 
@@ -720,8 +773,8 @@ are the same as vectors, measured from the origin.
 </aside>
 
 </section>
-<section id="slide-org403ea72">
-<h3 id="org403ea72">Affine Spaces</h3>
+<section id="slide-org669a3e0">
+<h3 id="org669a3e0">Affine Spaces</h3>
 <p>
 Types and operators working together as a team.
 </p>
@@ -753,8 +806,8 @@ The standard library has a couple of good examples.
 </aside>
 
 </section>
-<section id="slide-orgb560c42">
-<h3 id="orgb560c42"><code>chrono</code>: <code>time_point</code> and <code>duration</code></h3>
+<section id="slide-orgcefef0e">
+<h3 id="orgcefef0e"><code>chrono</code>: <code>time_point</code> and <code>duration</code></h3>
 <p>
 In <code>chrono</code>, time is a one-dimensional affine space.
 </p>
@@ -780,8 +833,8 @@ addition as closed over vectors.
 </aside>
 
 </section>
-<section id="slide-org2ebbf03">
-<h3 id="org2ebbf03"><code>chrono</code> as an affine space</h3>
+<section id="slide-org40a676c">
+<h3 id="org40a676c"><code>chrono</code> as an affine space</h3>
 <p>
 Thinking of it this way helps us to define the operations that make sense.
 </p>
@@ -831,13 +884,8 @@ we could offer that functionality.
 </section>
 </section>
 <section>
-<section id="slide-org4149f23">
-<h2 id="org4149f23">Why Be Conventional?</h2>
-<p>
-If our types are mathematical (and they almost always are, in some way),
-identifying the properties helps us.
-</p>
-
+<section id="slide-org2c22138">
+<h2 id="org2c22138">Why Overload Conventionally?</h2>
 <p>
 Helps users with:
 </p>
@@ -848,6 +896,25 @@ Helps users with:
 
 </ul>
 
+<aside class="notes">
+<p>
+The answer to "why be conventional?" has two sides.
+</p>
+
+<p>
+If our types are mathematical (and they almost always are, in some way),
+identifying the properties helps us.
+</p>
+
+<p>
+It helps users by analogy with what they know. It helps them intuit properties.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org37f7835">
+<h3 id="org37f7835">Why Overload Conventionally?</h3>
 <p>
 Helps implementers/designers identify:
 </p>
@@ -855,37 +922,27 @@ Helps implementers/designers identify:
 <li>a complete basis</li>
 <li>minimality vs convenience</li>
 <li>efficiency</li>
+<li>in general, the space of types and operations</li>
 
 </ul>
 
 <aside class="notes">
 <p>
-This is why we want to be conventional.
-</p>
-
-<p>
-It helps users by analogy with what they know. It helps them intuit properties.
-</p>
-
-<p>
-More importantly, as implementers it puts our types and operations on a firm
+More importantly, as implementers, it puts our types and operations on a firm
 foundation. It helps us identify missing parts of the design. It helps us think
 about which operations are likely to be fast and which are not. It helps us
 explore the design space of our types. It helps us know what is a minimal set of
-basis operations and which operations are for convenience and can be implemented
-in terms of the others.
+basis operations and which operations are for convenience.
 </p>
 
 </aside>
 
 </section>
-</section>
-<section>
-<section id="slide-org59dbe59">
-<h2 id="org59dbe59">Why Be Conventional?</h2>
+<section id="slide-orgbbfb528">
+<h3 id="orgbbfb528">Why Be Conventional?</h3>
 <p>
-It helps us take advantage of compositionality built into the standard library
-and the language.
+It helps us take advantage of compositionality built into<br />
+the standard library and the language.
 </p>
 
 <ul>
@@ -894,11 +951,624 @@ and the language.
 
 </ul>
 
+<aside class="notes">
+<p>
+With C++17, we got an extra reason to like overloading operators.
+</p>
+
+<p>
+Fold expressions are now in the language!
+</p>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-org505790a">
-<h2 id="org505790a">Straying from Convention</h2>
+<section id="slide-orgd956d1c">
+<h2 id="orgd956d1c">New stuff in C++17</h2>
+<aside class="notes">
+<p>
+So let's talk a bit about fold expressions and what else is new in C++17 related
+to operators.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org4f8600c">
+<h3 id="org4f8600c">Fold expressions</h3>
+<p>
+In C++17, <i>fold expressions</i> fold (reduce) a parameter pack over a binary
+operator.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">template</span> <span style="color: #707183;">&lt;</span><span style="color: #a020f0;">typename</span><span style="color: #0000ff;">...</span> Args<span style="color: #707183;">&gt;</span>
+<span style="color: #a020f0;">auto</span> <span style="color: #0000ff;">output</span><span style="color: #707183;">(</span><span style="color: #228b22;">Args</span>&amp;&amp;<span style="color: #0000ff;">...</span> args<span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+  <span style="color: #a020f0;">return</span> <span style="color: #7388d6;">(</span><span style="color: #008b8b;">std</span>::cout &lt;&lt; <span style="color: #0000ff;">...</span> &lt;&lt; args<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+This is a binary left fold.
+</p>
+
+<p>
+i.e. the operator used acts as if it is left-associative. In this case it's
+obvious if you consider the type of <code>std::cout</code> - the fold expression must be
+grouping to the left.
+</p>
+
+<p>
+Most of our operators are left associative, and most of the time, if you don't
+care, you want this left-to-right grouping.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org4085301">
+<h3 id="org4085301">Fold expressions</h3>
+<p>
+Choosing left- or right- fold is usually about commutativity rather than
+associativity.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">template</span> <span style="color: #707183;">&lt;</span><span style="color: #a020f0;">typename</span> <span style="color: #228b22;">Matrix</span>, <span style="color: #a020f0;">typename</span><span style="color: #0000ff;">...</span> Args<span style="color: #707183;">&gt;</span>
+<span style="color: #a020f0;">auto</span> <span style="color: #0000ff;">multiply_on_right</span><span style="color: #707183;">(</span><span style="color: #228b22;">Matrix</span>&amp;&amp; <span style="color: #a0522d;">m</span>, <span style="color: #228b22;">Args</span>&amp;&amp;<span style="color: #0000ff;">...</span> args<span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+  <span style="color: #a020f0;">return</span> <span style="color: #7388d6;">(</span><span style="color: #228b22;">m</span> * <span style="color: #0000ff;">...</span> * args<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+
+<span style="color: #a020f0;">template</span> <span style="color: #707183;">&lt;</span><span style="color: #a020f0;">typename</span> <span style="color: #228b22;">Matrix</span>, <span style="color: #a020f0;">typename</span><span style="color: #0000ff;">...</span> Args<span style="color: #707183;">&gt;</span>
+<span style="color: #a020f0;">auto</span> <span style="color: #0000ff;">multiply_on_left</span><span style="color: #707183;">(</span><span style="color: #228b22;">Matrix</span>&amp;&amp; <span style="color: #a0522d;">m</span>, <span style="color: #228b22;">Args</span>&amp;&amp;<span style="color: #0000ff;">...</span> args<span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+  <span style="color: #a020f0;">return</span> <span style="color: #7388d6;">(</span><span style="color: #228b22;">args</span> * <span style="color: #0000ff;">...</span> * m<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Sometimes you do care. Usually the operation itself is associative (e.g. matrix
+multiplication) so it doesn't matter which way the pack is folded, except in the
+application to the initial argument. In this case it's not commutative - so it's
+different whether we apply our transformation by multiplying on the left or the
+right.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org8ec1c3a">
+<h3 id="org8ec1c3a">Fold expressions</h3>
+<p>
+Unary fold expressions also exist&#x2026;
+</p>
+
+<p>
+But are mostly useful with operators that shouldn't really be overloaded.
+</p>
+
+<aside class="notes">
+<p>
+I'm not going to dwell on unary folds, although they exist too, because they are
+most usefully used with logical and, logical or, and comma operators, and it's
+generally not advisable to overload those operators.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org2864431">
+<h3 id="org2864431">New evaluation semantics</h3>
+<p>
+C++17 changed semantics for overloading:
+</p>
+<ul>
+<li><code>operator&amp;&amp;</code></li>
+<li><code>operator||</code></li>
+<li><code>operator,</code></li>
+
+</ul>
+
+<p>
+<i>Evaluation order guarantees</i> P0145
+</p>
+
+<aside class="notes">
+<p>
+Why? Well let's briefly cover how C++17 changed them, in case you have to deal
+with code that overloads them.
+</p>
+
+<p>
+It was long the case in C++ that the order of evaluation of arguments to a
+function (or operator) is indeterminate. That is still true in most cases.
+</p>
+
+<p>
+However, P0145 changed that for these three operators. Since C++17 these three
+operators evaluate their operands in left-to-right sequence, even when
+overloaded.
+</p>
+
+<p>
+But note: <code>operator&amp;&amp;</code> and <code>operator||</code> still don't short circuit when
+overloaded!
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org8b10c5c">
+<h3 id="org8b10c5c">Operators in C++17</h3>
+<ul>
+<li>Associativity is important for leveraging fold expressions</li>
+<li>Non-commutativity affects the choice of fold</li>
+<li>You probably still don't want to mess with <code>&amp;&amp;</code> <code>||</code> and <code>,</code></li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Unlocking fold expressions is a great reason to use operator overloading (as
+opposed to the other choice of using <code>std::accumulate</code>) especially if your
+operator is not commutative. Because it's more of a pain to write a right-fold
+with <code>std::accumulate</code> and reverse iterators.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org0ecce8e">
+<h3 id="org0ecce8e">Right-fold, old-style</h3>
+<p>
+Something like this.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #006400;">// </span><span style="color: #006400;">Assuming we have a class Foo with a non-commutative operation</span>
+
+<span style="color: #a020f0;">struct</span> <span style="color: #228b22;">right_multiplies</span> <span style="color: #707183;">{</span>
+  <span style="color: #a020f0;">template</span> <span style="color: #7388d6;">&lt;</span><span style="color: #a020f0;">typename</span> <span style="color: #228b22;">T</span><span style="color: #7388d6;">&gt;</span>
+  <span style="color: #228b22;">T</span> <span style="color: #a020f0;">operator</span><span style="color: #7388d6;">()</span><span style="color: #7388d6;">(</span><span style="color: #228b22;">T</span> <span style="color: #a0522d;">t1</span>, <span style="color: #228b22;">T</span> <span style="color: #a0522d;">t2</span><span style="color: #7388d6;">)</span> <span style="color: #a020f0;">const</span> <span style="color: #7388d6;">{</span>
+    <span style="color: #a020f0;">return</span> operation<span style="color: #909183;">(</span>t2, t1<span style="color: #909183;">)</span>;
+  <span style="color: #7388d6;">}</span>
+<span style="color: #707183;">}</span>;
+
+<span style="color: #a020f0;">template</span> <span style="color: #707183;">&lt;</span><span style="color: #a020f0;">template</span> <span style="color: #7388d6;">&lt;</span><span style="color: #a020f0;">class</span><span style="color: #7388d6;">&gt;</span> <span style="color: #a020f0;">typename</span> <span style="color: #228b22;">Container</span> = <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">initializer_list</span><span style="color: #707183;">&gt;</span>
+<span style="color: #228b22;">Foo</span> <span style="color: #0000ff;">right_fold_old</span><span style="color: #707183;">(</span><span style="color: #228b22;">Foo</span> <span style="color: #a0522d;">init</span>, <span style="color: #228b22;">Container</span><span style="color: #7388d6;">&lt;</span><span style="color: #228b22;">Foo</span><span style="color: #7388d6;">&gt;</span> <span style="color: #a0522d;">c</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">std</span>::accumulate<span style="color: #7388d6;">(</span><span style="color: #008b8b;">std</span>::crbegin<span style="color: #909183;">(</span>c<span style="color: #909183;">)</span>, <span style="color: #008b8b;">std</span>::crend<span style="color: #909183;">(</span>c<span style="color: #909183;">)</span>, init, right_multiplies<span style="color: #909183;">{}</span><span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+
+<span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">sum</span> = right_fold_old<span style="color: #707183;">(</span>foo_init, <span style="color: #7388d6;">{</span>foo1, foo2, foo3<span style="color: #7388d6;">}</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Here's what we had to do to write a right-fold before C++17.
+</p>
+
+<p>
+Something like this. The right-multiplies is a class we need to write to apply
+the operator the right way around. If we want this to be generic, we'd also need
+to pass <code>operation</code> to right_multiplies as a template argument. And we need to
+use reverse iterators, and we need to deal with a container. The call site is
+not as nice as it could be.
+</p>
+
+<p>
+If you don't use operator overloading, right-folds are a real pain.
+</p>
+
+<p>
+But if you do use operators&#x2026;
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org7d2c54b">
+<h3 id="org7d2c54b">Right-fold, new-style</h3>
+<p>
+Something like this.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #006400;">// </span><span style="color: #006400;">Assuming we have a class Foo with a non-commutative operator*</span>
+
+<span style="color: #a020f0;">template</span> <span style="color: #707183;">&lt;</span><span style="color: #a020f0;">typename</span><span style="color: #0000ff;">...</span> Args<span style="color: #707183;">&gt;</span>
+<span style="color: #228b22;">Foo</span> <span style="color: #0000ff;">right_fold_new</span><span style="color: #707183;">(</span><span style="color: #228b22;">Foo</span> <span style="color: #a0522d;">init</span>, <span style="color: #228b22;">Args</span>&amp;&amp;<span style="color: #0000ff;">...</span> args<span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> <span style="color: #7388d6;">(</span><span style="color: #228b22;">args</span> * <span style="color: #0000ff;">...</span> * init<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+
+<span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">sum</span> = right_fold_new<span style="color: #707183;">(</span>foo_init, foo1, foo2, foo3<span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+It's much nicer. It's much clearer in intent.
+</p>
+
+<p>
+So much for C++17, let's have a little look at what's coming in C++20.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org970c086">
+<h2 id="org970c086">New in C++20</h2>
+<p>
+We get a whole new operator!
+</p>
+
+<p>
+The three-way comparison operator.
+</p>
+
+<p>
+<code>operator&lt;=&gt;</code>
+</p>
+
+<p>
+AKA "the spaceship operator". [expr.spaceship]
+</p>
+
+<aside class="notes">
+<p>
+You've probably heard something about this.
+</p>
+
+<p>
+It's designed to provide a three-way comparison on x and y: something like
+strcmp does. So informally, if x is less than y, return less than zero, if x
+equals y, return zero, if x is greater than y, return greater than zero.
+</p>
+
+<p>
+Disclaimer: everything in this section is very new - so new it's not yet
+implemented in some cases. I'm going to try to tell you about what I think I
+know so far.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org446c5e2">
+<h3 id="org446c5e2"><code>operator&lt;=&gt;</code> 101</h3>
+<p>
+<code>#include &lt;compare&gt;</code> to get 5 types [cmp.categories]:
+</p>
+
+<ul>
+<li><code>std::strong_equality</code></li>
+<li><code>std::weak_equality</code></li>
+
+<li><code>std::strong_ordering</code></li>
+<li><code>std::weak_ordering</code></li>
+
+<li><code>std::partial_ordering</code></li>
+
+</ul>
+
+<p>
+A call to <code>operator&lt;=&gt;</code> returns a value of one of these types.
+</p>
+
+<aside class="notes">
+<p>
+<code>operator&lt;=&gt;</code> is designed to replace all the equality and ordering operators we
+have today. A type that defines <code>operator&lt;=&gt;</code>
+</p>
+
+<p>
+Strong vs weak here is what the standard calls substitutability: the idea that
+if x has a relation to y, f(x) has that same relation to f(y).
+</p>
+
+<p>
+I've got some examples of each type here to help understand.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org8da55be">
+<h3 id="org8da55be">Equality</h3>
+<p>
+<code>std::strong_equality</code> means values that are <code>equal</code> are indistinguishable.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #008b8b;">std</span>::<span style="color: #228b22;">strong_equality</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;=</span>&gt;<span style="color: #707183;">(</span><span style="color: #008b8b;">std</span>::<span style="color: #228b22;">type_info</span> <span style="color: #a0522d;">a</span>, <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">type_info</span> <span style="color: #a0522d;">b</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<p>
+<code>std::weak_equality</code> means values that are <code>equivalent</code> may be distinguishable.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #008b8b;">std</span>::<span style="color: #228b22;">weak_equality</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;=</span>&gt;<span style="color: #707183;">(</span><span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">filesystem</span>::<span style="color: #228b22;">path</span> <span style="color: #a0522d;">a</span>, <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">filesystem</span>::<span style="color: #228b22;">path</span> <span style="color: #a0522d;">b</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Disclaimer: these examples &amp; relations aren't actually in the standard (yet).
+They're just examples.
+</p>
+
+<p>
+std::type_info has no ordering, but does have strong equality.
+</p>
+
+<p>
+It's actually pretty difficult to find weak_equality types in the standard.
+Filesystem paths may be equivalent in the sense that they refer to the same
+object on disk, but they may differ because they may be relative or absolute,
+and contain extraneous .. components or the like.
+</p>
+
+<p>
+(When we put this in the standard, we may decide that paths have an ordering
+because they "are" strings&#x2026; I'm not sure that would be right.)
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org2646a16">
+<h3 id="org2646a16">Ordering</h3>
+<p>
+A <i>total</i> ordering means exactly one of the following is true:
+</p>
+<ul>
+<li>a &gt; b</li>
+<li>a == b</li>
+<li>a &lt; b</li>
+
+</ul>
+
+<p>
+<code>std::strong_ordering</code> is a total ordering <i>with</i> substitutability.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">template</span> <span style="color: #707183;">&lt;</span><span style="color: #a020f0;">typename</span> <span style="color: #228b22;">T</span><span style="color: #707183;">&gt;</span>
+<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">strong_ordering</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;=</span>&gt;<span style="color: #707183;">(</span><span style="color: #a020f0;">typename</span> <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">vector</span><span style="color: #7388d6;">&lt;</span><span style="color: #228b22;">T</span><span style="color: #7388d6;">&gt;</span>::<span style="color: #228b22;">iterator</span> <span style="color: #a0522d;">a</span>,
+                                 <span style="color: #a020f0;">typename</span> <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">vector</span><span style="color: #7388d6;">&lt;</span><span style="color: #228b22;">T</span><span style="color: #7388d6;">&gt;</span>::<span style="color: #228b22;">iterator</span> <span style="color: #a0522d;">b</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<p>
+<code>std::weak_ordering</code> is a total ordering <i>without</i> substitutability.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #008b8b;">std</span>::<span style="color: #228b22;">weak_ordering</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;=</span>&gt;<span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">a</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">b</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Of course the iterators have to be into the same vector; there are preconditions
+here.
+</p>
+
+<p>
+Probably not many examples of <code>weak_ordering</code> in the standard either. Case
+insensitive strings is a possible example.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org33a69ec">
+<h3 id="org33a69ec">Ordering</h3>
+<p>
+<code>std::partial_ordering</code> means it's possible that none of the following is true:
+</p>
+<ul>
+<li>a &gt; b</li>
+<li>a == b</li>
+<li>a &lt; b</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #008b8b;">std</span>::<span style="color: #228b22;">partial_ordering</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;=</span>&gt;<span style="color: #707183;">(</span><span style="color: #228b22;">float</span> <span style="color: #a0522d;">a</span>, <span style="color: #228b22;">float</span> <span style="color: #a0522d;">b</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Perhaps the canonical example of a partial order is float, because of the
+presence of NaNs.
+</p>
+
+<p>
+So with all this, how does using the spaceship operator have the potential to
+change things? Let's look at a representative bit of code.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org4d8dd20">
+<h3 id="org4d8dd20">Case study: Last year's SCM Challenge</h3>
+<p>
+Challenge: write a case insensitive string class that implements<br />
+all 6 comparison operations.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">ci_compare_equal</span> <span style="color: #707183;">{</span>
+    <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #7388d6;">()</span><span style="color: #7388d6;">(</span><span style="color: #228b22;">char</span> <span style="color: #a0522d;">x</span>, <span style="color: #228b22;">char</span> <span style="color: #a0522d;">y</span><span style="color: #7388d6;">)</span> <span style="color: #a020f0;">const</span> <span style="color: #7388d6;">{</span>
+        <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">std</span>::toupper<span style="color: #909183;">(</span>x<span style="color: #909183;">)</span> == <span style="color: #008b8b;">std</span>::toupper<span style="color: #909183;">(</span>y<span style="color: #909183;">)</span>;
+    <span style="color: #7388d6;">}</span>
+<span style="color: #707183;">}</span>;
+<span style="color: #a020f0;">struct</span> <span style="color: #228b22;">ci_compare_less</span> <span style="color: #707183;">{</span>
+    <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #7388d6;">()</span><span style="color: #7388d6;">(</span><span style="color: #228b22;">char</span> <span style="color: #a0522d;">x</span>, <span style="color: #228b22;">char</span> <span style="color: #a0522d;">y</span><span style="color: #7388d6;">)</span> <span style="color: #a020f0;">const</span> <span style="color: #7388d6;">{</span>
+        <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">std</span>::toupper<span style="color: #909183;">(</span>x<span style="color: #909183;">)</span> &lt; <span style="color: #008b8b;">std</span>::toupper<span style="color: #909183;">(</span>y<span style="color: #909183;">)</span>;
+    <span style="color: #7388d6;">}</span>
+<span style="color: #707183;">}</span>;
+
+<span style="color: #a020f0;">inline</span> <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">==</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">std</span>::equal<span style="color: #7388d6;">(</span>x.s.cbegin<span style="color: #909183;">()</span>, x.s.cend<span style="color: #909183;">()</span>,
+        y.s.cbegin<span style="color: #909183;">()</span>, y.s.cend<span style="color: #909183;">()</span>, ci_compare_equal<span style="color: #909183;">{}</span><span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+<span style="color: #a020f0;">inline</span> <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">std</span>::lexicographical_compare<span style="color: #7388d6;">(</span>x.s.cbegin<span style="color: #909183;">()</span>, x.s.cend<span style="color: #909183;">()</span>,
+        y.s.cbegin<span style="color: #909183;">()</span>, y.s.cend<span style="color: #909183;">()</span>, ci_compare_less<span style="color: #909183;">{}</span><span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+This was the Stevens Capital Management challenge that was at last year's
+CppCon. Here's more or less how I solved part of it.
+</p>
+
+<p>
+The ci_compare_equal and ci_compare_less here were just structs with a function
+call operator that do the obvious thing.
+</p>
+
+<p>
+Anyway, once we have these two operators, we can implement the rest.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org5fa7b51">
+<h3 id="org5fa7b51">Case study - continued</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">inline</span> <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">!=</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> !<span style="color: #7388d6;">(</span>x == y<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+
+<span style="color: #a020f0;">inline</span> <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&gt;</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> y &lt; x;
+<span style="color: #707183;">}</span>
+
+<span style="color: #a020f0;">inline</span> <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;=</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> !<span style="color: #7388d6;">(</span>y &lt; x<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+
+<span style="color: #a020f0;">inline</span> <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&gt;=</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> !<span style="color: #7388d6;">(</span>x &lt; y<span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+The canonical way to implement the comparison operators.
+</p>
+
+<p>
+Note that we never do more than one operation (and possibly a not). e.g. When we
+do <code>operator&lt;=</code>, we don't actually test <code>operator&lt;</code> and <code>operator==</code>.
+</p>
+
+<p>
+You can copy-paste these with your own types, or template them: they never
+change (prior to C++20).
+</p>
+
+<p>
+Also note that all the comparison operators are free functions. I prefer to
+write them this way because it puts the two arguments on an equal footing and
+makes for better symmetry. And <code>operator==</code> and <code>operator&lt;</code> are friends only if
+they need to be. (The rest never need to be.)
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgabdca54">
+<h3 id="orgabdca54">So how did this change with C++20?</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">inline</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">weak_ordering</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">&lt;=</span>&gt;<span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CIString</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">std</span>::lexicographical_compare_3way<span style="color: #7388d6;">(</span>
+        x.s.cbegin<span style="color: #909183;">()</span>, x.s.cend<span style="color: #909183;">()</span>, y.s.cbegin<span style="color: #909183;">()</span>, y.s.cend<span style="color: #909183;">()</span>,
+        <span style="color: #909183;">[]</span> <span style="color: #909183;">(</span><span style="color: #228b22;">char</span> <span style="color: #a0522d;">x</span>, <span style="color: #228b22;">char</span> <span style="color: #a0522d;">y</span><span style="color: #909183;">)</span> <span style="color: #909183;">{</span>
+            <span style="color: #a020f0;">const</span> <span style="color: #a020f0;">auto</span> diff = <span style="color: #008b8b;">std</span>::toupper<span style="color: #709870;">(</span>x<span style="color: #709870;">)</span> - <span style="color: #008b8b;">std</span>::toupper<span style="color: #709870;">(</span>y<span style="color: #709870;">)</span>;
+            <span style="color: #a020f0;">return</span> <span style="color: #228b22;">diff</span> <span style="color: #709870;">&lt;</span> <span style="color: #008b8b;">0</span> ? <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">weak_ordering</span>::less :
+              diff <span style="color: #709870;">&gt;</span> <span style="color: #008b8b;">0</span> ? <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">weak_ordering</span>::greater :
+              <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">weak_ordering</span>::equivalent;
+        <span style="color: #909183;">}</span><span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+This operator now does everything. We're using the new
+<code>lexicographical_compare_3way</code> algorithm which in turn uses a 3-way comparison
+function. Notice that the lambda returns a value of type <code>std::weak_ordering</code>.
+We could make <code>operator&lt;=&gt;</code> return <code>auto</code> if we wanted.C++20 gives us the
+ability to use a non-capturing lambda here because now they can be
+default-constructed.
+</p>
+
+<p>
+But there's a problem here. What is it? This function does everything, but it
+doesn't do equality efficiently. If we want that we still need to write it the
+old way - and we can still provide <code>operator==</code> and <code>operator!=</code>. Unfortunately
+there's no <code>std::equal_3way</code> yet.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org4427b07">
+<h3 id="org4427b07"><code>operator&lt;=&gt;</code> guidelines</h3>
+<p>
+It's too new to switch to it yet (obviously - it's C++20).
+</p>
+
+<ul>
+<li>library support is only just being figured out</li>
+<li>no real implementations yet</li>
+<li>issues with generic code/composition have to be worked out</li>
+<li>perf pitfalls with sequence containers + naive usage</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Clearly there is some way to go yet on figuring out the rough edges of this
+operator. It's very new.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org1ee65c3">
+<h2 id="org1ee65c3">Straying from Convention</h2>
 <blockquote nil>
 <p>
 "When I use a word," Humpty Dumpty said, in rather a scornful tone, "it means
@@ -913,106 +1583,571 @@ is," said Humpty Dumpty, "which is to be master—that's all.”
 </div>
 </blockquote>
 
-</section>
-<section id="slide-org873252a">
-<h3 id="org873252a">DSLs</h3>
+<aside class="notes">
+<p>
+So we've talked about being conventional with operators. Now let's talk about
+what we can gain from breaking from the mold. Let's have some fun.
+</p>
+
+</aside>
 
 </section>
-<section id="slide-org7ea00ad">
-<h3 id="org7ea00ad"><code>chrono</code> dates</h3>
+<section id="slide-org66da4bc">
+<h3 id="org66da4bc">DSLs</h3>
+<p>
+The primary use of a DSL is in the construction of (otherwise) complex objects.
+</p>
+
+<ul>
+<li>terser</li>
+<li>simpler</li>
+<li>manipulable</li>
+
+</ul>
+
+<p>
+The use of template expressions may also provide performance gains.
+</p>
+
+<p>
+UDLs are a natural fit for DSLs.
+</p>
+
+<aside class="notes">
+<p>
+DSLs are where operators work together with types to make code easier to
+understand.
+</p>
+
+<p>
+Typically they shine where the objects and classes you want to construct are not
+difficult to understand (you never want that), but where it would be
+prohibitively wordy to construct them. We're trying to achieve readability.
+</p>
+
+</aside>
 
 </section>
-<section id="slide-org4631cf2">
-<h3 id="org4631cf2">[Boost.]SML</h3>
+<section id="slide-org4445a1d">
+<h3 id="org4445a1d">Readability</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span><span style="color: #707183;">&lt;</span><span style="color: #228b22;">int</span><span style="color: #707183;">&gt;</span> <span style="color: #a0522d;">v</span>;
+v.reserve<span style="color: #707183;">(</span><span style="color: #008b8b;">5</span><span style="color: #707183;">)</span>;
+v.push_back<span style="color: #707183;">(</span><span style="color: #008b8b;">1</span><span style="color: #707183;">)</span>;
+v.push_back<span style="color: #707183;">(</span><span style="color: #008b8b;">2</span><span style="color: #707183;">)</span>;
+v.push_back<span style="color: #707183;">(</span><span style="color: #008b8b;">3</span><span style="color: #707183;">)</span>;
+v.push_back<span style="color: #707183;">(</span><span style="color: #008b8b;">4</span><span style="color: #707183;">)</span>;
+v.push_back<span style="color: #707183;">(</span><span style="color: #008b8b;">5</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+<p>
+vs
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span><span style="color: #707183;">&lt;</span><span style="color: #228b22;">int</span><span style="color: #707183;">&gt;</span> <span style="color: #a0522d;">v</span><span style="color: #707183;">{</span><span style="color: #008b8b;">1</span>,<span style="color: #008b8b;">2</span>,<span style="color: #008b8b;">3</span>,<span style="color: #008b8b;">4</span>,<span style="color: #008b8b;">5</span><span style="color: #707183;">}</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+We have the square-brackets operator, and the parens operator; here we have the
+curly brackets/braces operator! initializer_list is a DSL for initialization.
+</p>
+
+<p>
+This is why we want DSLs: they give us easier to read, declarative code. When we
+overload operators, we allow the users of our library to form expressions rather
+than having to sequence statements.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orga3212b2">
+<h3 id="orga3212b2"><code>chrono</code> dates</h3>
+<p>
+A DSL with one operator and two UDLs.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">using</span> <span style="color: #a020f0;">namespace</span> <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">chrono</span>;
+
+<span style="color: #a020f0;">constexpr</span> <span style="color: #a020f0;">auto</span> today_us = September/<span style="color: #008b8b;">25</span>/<span style="color: #008b8b;">2018</span>;
+<span style="color: #a020f0;">constexpr</span> <span style="color: #a020f0;">auto</span> today_uk = <span style="color: #008b8b;">25d</span>/September/<span style="color: #008b8b;">2018</span>;
+<span style="color: #a020f0;">constexpr</span> <span style="color: #a020f0;">auto</span> today = <span style="color: #008b8b;">2018y</span>/September/<span style="color: #008b8b;">25</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+<code>chrono</code> provides us with the only possible defence of using the US system for
+writing dates: it's one character fewer.
+</p>
+
+<p>
+Consider alternative ways of constructing dates and they all end up using
+operators (mostly operator+), and being much more verbose. So the use of
+<code>operator/</code> works really well, especially together with the UDLs.
+</p>
+
+<p>
+It's not "mathematically conventional" but it is datewise-conventional.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org425d077">
+<h3 id="org425d077"><code>filesystem::path</code></h3>
+<p>
+A DSL with one operator.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">using</span> <span style="color: #a020f0;">namespace</span> <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">filesystem</span>;
+
+<span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">home_prefix</span> = path<span style="color: #707183;">{</span><span style="color: #b22222;">"/home"</span><span style="color: #707183;">}</span>;
+<span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">my_home_dir</span> = home_prefix / <span style="color: #b22222;">"bdeane"</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Another non-conventional operator, but it works brilliantly. There's no
+confusion with division here. It's taking what we already do with strings -
+concatenation - and making it easier.
+</p>
+
+<p>
+I've spent far too much of my life dealing with the presence or absence of
+trailing slashes in path names. <code>operator/</code> just does the right thing.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orge49aec2">
+<h3 id="orge49aec2">[Boost.]SML</h3>
+<p>
+(Disclaimer: SML isn't a Boost library)
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">tcp_release</span> <span style="color: #a020f0;">final</span> <span style="color: #707183;">{</span>
+  <span style="color: #a020f0;">auto</span> <span style="color: #a020f0;">operator</span><span style="color: #7388d6;">()</span><span style="color: #7388d6;">()</span> <span style="color: #a020f0;">const</span> <span style="color: #7388d6;">{</span>
+    <span style="color: #a020f0;">using</span> <span style="color: #a020f0;">namespace</span> <span style="color: #008b8b;">sml</span>;
+    <span style="color: #a020f0;">return</span> make_transition_table<span style="color: #909183;">(</span>
+      *<span style="color: #b22222;">"established"</span>_s + <span style="color: #228b22;">event</span><span style="color: #709870;">&lt;</span>release<span style="color: #709870;">&gt;</span>          / send_fin  = <span style="color: #b22222;">"fin wait 1"</span>_s,
+       <span style="color: #b22222;">"fin wait 1"</span>_s  + <span style="color: #228b22;">event</span><span style="color: #709870;">&lt;</span>ack<span style="color: #709870;">&gt;</span> <span style="color: #709870;">[</span> is_valid <span style="color: #709870;">]</span>             = <span style="color: #b22222;">"fin wait 2"</span>_s,
+       <span style="color: #b22222;">"fin wait 2"</span>_s  + <span style="color: #228b22;">event</span><span style="color: #709870;">&lt;</span>fin<span style="color: #709870;">&gt;</span> <span style="color: #709870;">[</span> is_valid <span style="color: #709870;">]</span> / send_ack  = <span style="color: #b22222;">"timed wait"</span>_s,
+       <span style="color: #b22222;">"timed wait"</span>_s  + <span style="color: #228b22;">event</span><span style="color: #709870;">&lt;</span>timeout<span style="color: #709870;">&gt;</span>                      = X
+    <span style="color: #909183;">)</span>;
+  <span style="color: #7388d6;">}</span>
+<span style="color: #707183;">}</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+There's a lot going on here. This is a concise definition of a state machine.
+We've got a UDL, a constant, and five different operator overloads working
+together. There is a lot of type machinery in the background, but the result is
+readable.
+</p>
+
+<p>
+It's also very malleable. This is what operators give us: readability, yes, but
+more so, easy manipulation. Adding a state or changing a state is easy here
+because the terse, transparent syntax makes it easy to reason about the state
+machine.
+</p>
+
+<p>
+Let's think about choices we could have made in operators here. (The operators
+follow UML syntax.) If you want to know more, see Kris's talk at 9am Wed.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org32ff1fc">
+<h3 id="org32ff1fc">Operators and Monads</h3>
+<p>
+What's the biggest problem with monads?
+</p>
+
+<ul>
+<li class="fragment appear">understanding them?</li>
+<li class="fragment appear">explaining them?</li>
+<li class="fragment appear">CT wonks?</li>
+<li class="fragment appear">the sudden urge to try to make everything monadic?</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Monads are cropping up in a few places now. <code>std::optional</code>, <code>std::expected</code>,
+<code>std::future</code>&#x2026;
+</p>
+
+<p>
+None of these things.
+</p>
+
+<p>
+This is a talk about operators&#x2026;
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orga9c3ae6">
+<h3 id="orga9c3ae6">The main problem with monads</h3>
+<p>
+In C++, <code>operator&gt;&gt;=</code> is <i>right associative</i>!
+</p>
+
+<p>
+What operator overloads are we going to use is we want to compose things
+monadically?
+</p>
+
+<aside class="notes">
+<p>
+Monads make a lot of sense for modelling some things. But which operators should
+we use for monadic operations?
+</p>
+
+<p>
+In C++ there aren't many good choices. And this goes back to the top of the talk.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org30ad81e">
+<h3 id="org30ad81e">Operator overloading and futures</h3>
+<div class='vertspace2'></div>
+<img src='futures.svg'/>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #006400;">// </span><span style="color: #006400;">imaginary-ish code</span>
+<span style="color: #228b22;">my_future</span><span style="color: #707183;">&lt;</span>A<span style="color: #707183;">&gt;</span> <span style="color: #0000ff;">f</span><span style="color: #707183;">(</span>X<span style="color: #707183;">)</span>;
+<span style="color: #228b22;">my_future</span><span style="color: #707183;">&lt;</span>B<span style="color: #707183;">&gt;</span> <span style="color: #0000ff;">g1</span><span style="color: #707183;">(</span>A<span style="color: #707183;">)</span>;
+<span style="color: #228b22;">my_future</span><span style="color: #707183;">&lt;</span>C<span style="color: #707183;">&gt;</span> <span style="color: #0000ff;">g2</span><span style="color: #707183;">(</span>A<span style="color: #707183;">)</span>;
+<span style="color: #228b22;">my_future</span><span style="color: #707183;">&lt;</span>D<span style="color: #707183;">&gt;</span> <span style="color: #0000ff;">h</span><span style="color: #707183;">(</span>B, C<span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Imagine a simple composition of asynchronous functions that return futures.
+</p>
+
+<p>
+Notice that their composition can itself be viewed as a function from X to
+future&lt;D&gt;.
+</p>
+
+<p>
+I'm not making any assumptions about how <code>my_future</code> is implemented here.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org2084c87">
+<h3 id="org2084c87">Operator Overloading and Futures</h3>
+<div class='vertspace2'></div>
+<div class="org-src-container">
+
+<pre  class="fragment appear"><span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">fut</span> = f<span style="color: #707183;">()</span>;
+<span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">split1</span> = fut.then<span style="color: #707183;">(</span>g1<span style="color: #707183;">)</span>;
+<span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">split2</span> = fut.then<span style="color: #707183;">(</span>g2<span style="color: #707183;">)</span>;
+<span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">fut2</span> = when_all<span style="color: #707183;">(</span>split1, split2<span style="color: #707183;">)</span>.then<span style="color: #707183;">(</span>h<span style="color: #707183;">)</span>;
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment appear"><span style="color: #a020f0;">auto</span> <span style="color: #a0522d;">fut</span> = f<span style="color: #707183;">()</span> &gt;= <span style="color: #707183;">(</span>g1 &amp; g2<span style="color: #707183;">)</span> &gt;= h;
+</pre>
+</div>
+<p class="fragment appear">
+Operator overloading can clarify the computational structure when combining
+futures/promises.
+</p>
+
+<aside class="notes">
+<p>
+Here's again why operators are important: when we can use operators to compose
+futures, it becomes easier to see the computational structure of the
+composition.
+</p>
+
+<p>
+Business logic vs mechanism of concurrency vs strategy of parallelism.
+</p>
+
+<p>
+The question is, what to use for an operator. This is one of the real problems
+with operator overloading: lack of choice almost forces lack of conventionality.
+</p>
+
+<p>
+I don't have a good sense of what will become conventional in monadic
+operations, if anything, but I don't think this is a bad way to go.
+</p>
+
+</aside>
 
 </section>
 </section>
 <section>
-<section id="slide-orgf5a7bfa">
-<h2 id="orgf5a7bfa">Notes</h2>
+<section id="slide-orgcd5f6a6">
+<h2 id="orgcd5f6a6">Mechanics</h2>
+<aside class="notes">
 <p>
-#include &lt;algorithm&gt;
-#include &lt;compare&gt;
-#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;type_traits&gt;
+Now I want to cover a few mechanics of writing operator overloads, choices and
+preferences.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgd9b210c">
+<h3 id="orgd9b210c">Free or not?</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">Foo</span> <span style="color: #707183;">{</span>
+  <span style="color: #228b22;">Foo</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">+</span><span style="color: #7388d6;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">Foo</span>&amp; <span style="color: #a0522d;">other</span><span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>;
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">Foo</span> <span style="color: #707183;">{</span>
+<span style="color: #707183;">}</span>;
+
+<span style="color: #228b22;">Foo</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">+</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">Foo</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Foo</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span>;
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+First question: which should you prefer, and why?
 </p>
 
 <p>
-namespace std {
+Normal rules apply: prefer a free function if you can. Free functions promote
+encapsulation: keeping the basis functions of your class minimal, complete and
+stable is desirable, and building further convenience with free functions
+promotes encapsulation: relying on the class interface and not the
+implementation.
 </p>
 
 <p>
-template&lt; class InputIt1, class InputIt2, class Cmp &gt;
-constexpr auto lexicographical_compare_3way( InputIt1 b1, InputIt1 e1,
-                                             InputIt2 b2, InputIt2 e2,
-                                             Cmp comp)
--&gt; std::common_comparison_category_t&lt;decltype(comp(*b1, *b2)), std::strong_ordering&gt;;
-}
+Free functions also have the slightly more nuanced advantage that they put their
+operands on an "equal footing" mentally. This is more natural to think about
+especially in the case of a commutative operation.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgefca4af">
+<h3 id="orgefca4af">Free and non-free</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">Foo</span> <span style="color: #707183;">{</span>
+  <span style="color: #228b22;">Foo</span>&amp; <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">+=</span><span style="color: #7388d6;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">Foo</span>&amp; <span style="color: #a0522d;">other</span><span style="color: #7388d6;">)</span>;
+<span style="color: #707183;">}</span>;
+
+<span style="color: #228b22;">Foo</span> <span style="color: #a020f0;">operator</span><span style="color: #0000ff;">+</span><span style="color: #707183;">(</span><span style="color: #a020f0;">const</span> <span style="color: #228b22;">Foo</span>&amp; <span style="color: #a0522d;">x</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Foo</span>&amp; <span style="color: #a0522d;">y</span><span style="color: #707183;">)</span> <span style="color: #707183;">{</span>
+  <span style="color: #228b22;">Foo</span> <span style="color: #a0522d;">r</span><span style="color: #7388d6;">{</span>x<span style="color: #7388d6;">}</span>;
+  r += y;
+  <span style="color: #a020f0;">return</span> r;
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Binary operators generally should be implemented in terms of their assignment
+counterparts. This is part of providing a complete set of operators and is an
+application of the DRY principle.
 </p>
 
 <p>
-class CIString {
-	std::string s;
+In fact, the "operator assignment" operators need not be member functions. I
+don't know why. Plain <code>operator=</code> has to be a member function.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org3fdc998">
+<h3 id="org3fdc998">Don't forget qualifiers</h3>
+<p>
+Operators are functions, so you should apply all the normal rules of writing
+functions.
+</p>
+
+<ul>
+<li><code>constexpr</code></li>
+<li><code>const</code></li>
+<li><code>noexcept</code></li>
+<li>parameter types</li>
+<li>return type</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Hopefully this is all obvious. Think about parameter types. Think about the
+return type. Qualify appropriately.
 </p>
 
 <p>
-public:
-	CIString(std::string _s): s(_s) {};
+This slide is of course a talk in its own right.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orga2b2a4e">
+<h2 id="orga2b2a4e">Guidelines Redux</h2>
+<p>
+Let's recap.
+</p>
+
+</section>
+<section id="slide-org3490956">
+<h3 id="org3490956">When to use operator overloading</h3>
+<p>
+Use operators when:
+</p>
+<ul>
+<li class="fragment appear">you have a natural binary function that combines your types</li>
+<li class="fragment appear">your types obey mathematical principles (associativity, etc)</li>
+<li class="fragment appear">you want users to be able to manipulate expressions</li>
+<li class="fragment appear">you want to make complex construction easier</li>
+<li class="fragment appear">you want users to intuit properties of your types</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Don't force things.
 </p>
 
 <p>
-    // functions want to be free!
-    friend inline std::strong_ordering operator&lt;=&gt;(const CIString&amp; x, const CIString&amp; y);
-};
+Do exploit the power that operators give to you as an implementer and to your
+users.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orga129aad">
+<h3 id="orga129aad">When not to use operator overloading</h3>
+<p>
+Don't use (only) operators when:
+</p>
+<ul>
+<li class="fragment appear">you can provide better perf with an n-ary function</li>
+<li class="fragment appear">they aren't yet ready for primetime (<code>operator&lt;=&gt;</code>)</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+This is one of the most important points against dogmatic operator overloading.
+Compilers can't collapse multiple binary operations into an n-ary operation. If
+you can, and it's important to you for better performance, by all means provide
+that interface. Don't <i>constrain</i> your users to only binary operations.
 </p>
 
 <p>
-struct ci_compare_less
-{
-    std::strong_ordering operator()(char x, char y) const
-    {
-        const auto diff = std::toupper(x) - std::toupper(y);
-        return diff &lt; 0 ?
-          std::strong_ordering::less :
-          diff &gt; 0 ?
-            std::strong_ordering::greater :
-            std::strong_ordering::equivalent;
-    }
-};
+As far as the spaceship operator goes, watch this space. I think it needs to
+evolve a bit more. Which is fair enough.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-org6d273e9">
+<h3 id="org6d273e9">Don't</h3>
+<ul>
+<li class="fragment appear">break contrariety of <code>operator==</code> and <code>operator!=</code></li>
+<li class="fragment appear">break associativity</li>
+<li class="fragment appear">be afraid to overload just one operator, if it makes sense (<code>operator/</code>)</li>
+<li class="fragment appear">overload <code>operator&amp;&amp;</code> <code>operator||</code> <code>operator,</code> even with P0145</li>
+<li class="fragment appear">pick weird operators if your type <i>is</i> mathematical</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+P0145: remember you don't get short circuit behaviour with &amp;&amp; and ||.
 </p>
 
 <p>
-// operator&lt;=&gt;
-inline std::strong_ordering operator&lt;=&gt;(const CIString&amp; x, const CIString&amp; y)
-{
-    return std::lexicographical_compare_3way(x.s.cbegin(), x.s.cend(),
-        y.s.cbegin(), y.s.cend(), ci_compare_less{});
-}
+And there is no good convention for the comma operator that I know of.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgb2f841d">
+<h3 id="orgb2f841d">Do</h3>
+<ul>
+<li class="fragment appear">use conventions <i>other</i> than mathematical ones</li>
+<li class="fragment appear">consider distinguishing your types to leverage affine spaces</li>
+<li class="fragment appear">use operators for non-commutative operations to leverage fold expressions</li>
+<li class="fragment appear">use UDLs as a counterpart to operators to help with construction</li>
+<li class="fragment appear">provide the whole set of related operators if you provide one</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+The technique of separating types is a really powerful one for clarifying your
+design. Even if you don't end up with an affine space, it's worth trying to
+separate types and see where it leads.
 </p>
 
 <p>
-// You can use this function to write any tests you may want.
-auto tests() {
-    using namespace std::literals;
-    auto s1 = "HELLO, WORLD1"s;
-    auto s2 = "hello, world2"s;
+Provide the complete set of operators (including all variations of types). It's
+just going to end up annoying people if you don't. Often, type variation means
+handling <code>std::string</code> and <code>char *</code> possibilities, and <code>string_view</code> can help
+here.
 </p>
 
-<p>
-auto lhs = std::is_lt(CIString{s1} &lt;=&gt; s2);
-auto rhs = std::is_lt(s1 &lt;=&gt; CIString{s2});
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org74e9a86">
+<h2 id="org74e9a86">Thank you</h2>
+<p class="fragment appear">
+Questions?
 </p>
 
-<p>
-    return lhs &amp;&amp; rhs;
-};
+<p class="fragment appear">
+<del>Comments thinly disguised as questions?</del>
 </p>
 
-<p>
-int main() {
-	return tests();
-}
+<p class="fragment appear">
+Pitchforks &amp; torches?
 </p>
 </section>
 </section>

@@ -15,7 +15,7 @@
 
 #+TITLE: Operator Overloading
 #+AUTHOR: Ben Deane
-#+DATE: Tuesday September 24th, 2018
+#+DATE: Tuesday September 25th, 2018
 
 #+REVEAL_HTML: <script type="text/javascript" src="./presentation.js"></script>
 
@@ -40,7 +40,7 @@ I'll mostly be talking about "mathematical" operators (arithmetic, bitwise,
 equality, etc).
 
 #+BEGIN_NOTES
-
+I'm going to be talking about /why/ we should embrace operator overloading.
 #+END_NOTES
 
 * Operators in C++
@@ -49,7 +49,6 @@ They just aren't very good. Things we can't control:
 
 #+ATTR_REVEAL: :frag (appear)
  - name
- - lookup rules
  - precedence
  - associativity
  - arity
@@ -64,9 +63,10 @@ The syntax is fixed - we don't get to introduce new operators (e.g. power).
 Precedence rules often give us a very short list of operators to choose from if
 we want to overload. Associativity can be a problem in overloading some
 operators. We don't get arity choices (if you think this is an odd thing to
-want, consider the utility in making some binary operators unary). We don't get
-a choice whether to make an operator infix, prefix or postfix. For some
-operators evaluation semantics are fixed.
+want, consider the utility in making some binary operators unary and read Ken
+Iverson's 1979 Turing Award Lecture). We don't get a choice whether to make an
+operator infix, prefix or postfix. For some operators evaluation semantics are
+fixed.
 
 OK, so why do we care and what can we do about it with the power that we do
 have?
@@ -87,12 +87,14 @@ Why should we use operators at all?
  - because we have to (equality/ordering)?
 
 #+BEGIN_NOTES
+For some or all of these reasons?
+
 Sometimes we "have to" overload operators because we want to put our types in
-for example a set.
+a particular type of container that requires it, for example a set.
 #+END_NOTES
 
 ** Why?
-Because they convey meaning that named functions don't.
+Because operators /convey meaning about types/ that named functions don't.
 
 #+BEGIN_SRC c++
 a + b + c;
@@ -132,11 +134,14 @@ Because things haven't always been this way.
 #+REVEAL_HTML: <font size="3">By Joffboff - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=56389131</font>
 
 #+BEGIN_NOTES
-"What I'm used to" can mean "this is the only thing I've experienced".
+"What I'm used to" can mean "this is the only thing I've experienced". One
+person's convention can be unknown to another. Often things are just a matter of
+familiarity.
 
-This is the Canon Digital Ixus. This was the first digital camera I owned,
-because this was the point when digital cameras really started to get good. Even
-saying "digital" camera sounds today like an anachronism.
+This is the Canon Digital Ixus (Elph). This was the first digital camera I
+owned, because this was the point when digital cameras really started to get
+good. Even saying "digital" camera sounds today like an anachronism. The only
+time this sees use any more is when people need to save their phone battery.
 
 Wikipedia tells me this camera was released in 2000. It's older than some C++
 programmers.
@@ -148,7 +153,7 @@ programmers.
 [[file:floppy.png]]
 
 #+BEGIN_NOTES
-Another example of "lost convention"?
+Convention is weird, isn't it?
 #+END_NOTES
 
 ** What is "convention" in history?
@@ -193,6 +198,10 @@ computer terminal limitations.
 #+ATTR_REVEAL: :frag (appear)
 These are really arbitrary and only a little older than me.
 
+#+BEGIN_NOTES
+As far as I can tell, these are only about 50 years old.
+#+END_NOTES
+
 ** Revised Guideline
 
 When defining our own operators, we are well-advised to stick to conventional\\
@@ -204,6 +213,10 @@ Corollary: study history.
 
 /A History of Mathematical Notations/ by Florian Cajori
 
+#+BEGIN_NOTES
+
+#+END_NOTES
+
 ** Operator overloading advice
 #+REVEAL_HTML: <div class='vertspace2'></div>
 #+BEGIN_QUOTE
@@ -214,13 +227,16 @@ Corollary: study history.
 #+END_QUOTE
 
 #+BEGIN_NOTES
-Arguments against operator overloading:
+~int~ is well understood, and ~int~ is fast.
 
-People don't like re-using operators to mean arbitrary, nonconventional things.
-(cf trademarks)
+What are the principle reasons we might not like operator overloading? I think 2
+reasons.
 
-People don't like the potential for operators to impose performance costs
-through hidden computation and through binary functions calls rather than n-ary.
+I don't like re-using operators to mean arbitrary, nonconventional things. (cf
+trademarks)
+
+I don't like the potential for operators to impose performance costs through
+hidden computation and through binary functions calls rather than n-ary.
 #+END_NOTES
 
 ** Operator overloading
@@ -316,8 +332,15 @@ Because operators allow concision/readability.
 Because operators allow expressions to be manipulated.
 
 #+BEGIN_NOTES
-Operators convey meaning not only about operations but also about the types they
-act upon. Closedness is one example.
+I hope I've given a pretty good answer to "why should we use operators?"
+
+Because operators convey meaning not only about /operations/ but about the
+/types/ they act upon.
+
+Because well-used operators allow readability through concision.
+
+Because operators are at the heart of /expressions/ and expressions allow
+manipulation to provide better readability and perhaps performance.
 #+END_NOTES
 
 * Mathematical Principles
@@ -325,6 +348,10 @@ act upon. Closedness is one example.
 Which mathematical conventions should we follow, then?
 
 A selection, in approximate order of importance...
+
+#+BEGIN_NOTES
+Here are some conventions I think are important.
+#+END_NOTES
 
 ** Probably the most important
 
@@ -344,7 +371,8 @@ bool operator!=(const T& x, const T& y) noexcept
 #+END_SRC
 
 #+BEGIN_NOTES
-If you break this, you will not pass a code review from me.
+If you break the opposite-ness of equality and inequality, you will not pass a
+code review from me.
 
 If you make an equality operator, you had better make inequality mean its
 opposite.
@@ -362,6 +390,9 @@ Almost all mathematical objects we work with in C++ obey this, so if you violate
 this, your code could be very surprising.
 
 #+BEGIN_NOTES
+Associativity is one of the key properties that allows us to manipulate
+expressions.
+
 Unfortunately we don't yet have the machinery in C++ to take advantage of this
 fully. As we will see in a couple of slides' time.
 #+END_NOTES
@@ -380,7 +411,7 @@ assert(a > b || a <= b);
 Mostly true (but notably not for ~float~).
 
 #+BEGIN_NOTES
-Mostly for ordering. This makes thinking about ordering a whole lot easier.
+For ordering: this makes thinking about ordering a whole lot easier.
 #+END_NOTES
 
 ** Nice to have
@@ -426,10 +457,11 @@ But if you don't have closure over your type, you had better know why.
 
 #+BEGIN_NOTES
 This is one of those things that is maybe so obvious that we don't think about
-it. After all, in C++ even the division operator is closed over integral types
-(if we discount division by zero).
+it. When you add together two things, you get a thing of the same type. After
+all, in C++, unlike in mathematics, even the division operator is closed over
+integral types.
 
-But in fact breaking this rule can be good design. And that leads us to affine
+But in fact relaxing this rule can be good design. And that leads us to affine
 spaces.
 #+END_NOTES
 
@@ -517,41 +549,445 @@ If we have more than one dimension, maybe e.g. dot means something, and maybe
 we could offer that functionality.
 #+END_NOTES
 
-* Why Be Conventional?
+* Why Overload Conventionally?
 
 Helps users with:
  - intuition
  - manipulation
  - properties
 
+#+BEGIN_NOTES
+The answer to "why be conventional?" has two sides.
+
+If our types are mathematical (and they almost always are, in some way),
+identifying the properties helps us.
+
+It helps users by analogy with what they know. It helps them intuit properties.
+#+END_NOTES
+
+** Why Overload Conventionally?
+
 Helps implementers/designers identify:
  - a complete basis
  - minimality vs convenience
  - efficiency
+ - in general, the space of types and operations
 
 #+BEGIN_NOTES
-If our types are mathematical (and they almost always are, in some way),
-identifying the properties helps us.
-
-This is why we want to be conventional.
-
-It helps users by analogy with what they know. It helps them intuit properties.
-
-More importantly, as implementers it puts our types and operations on a firm
+More importantly, as implementers, it puts our types and operations on a firm
 foundation. It helps us identify missing parts of the design. It helps us think
 about which operations are likely to be fast and which are not. It helps us
 explore the design space of our types. It helps us know what is a minimal set of
-basis operations and which operations are for convenience and can be implemented
-in terms of the others.
+basis operations and which operations are for convenience.
 #+END_NOTES
 
-* Why Be Conventional?
+** Why Be Conventional?
 
 It helps us take advantage of compositionality built into\\
 the standard library and the language.
 
  - ~std::accumulate~, ~std::reduce~, etc
  - fold expressions
+
+#+BEGIN_NOTES
+With C++17, we got an extra reason to like overloading operators.
+
+Fold expressions are now in the language!
+#+END_NOTES
+
+* New stuff in C++17
+
+
+#+BEGIN_NOTES
+So let's talk a bit about fold expressions and what else is new in C++17 related
+to operators.
+#+END_NOTES
+
+** Fold expressions
+
+In C++17, /fold expressions/ fold (reduce) a parameter pack over a binary
+operator.
+
+#+BEGIN_SRC c++
+template <typename... Args>
+auto output(Args&&... args) {
+  return (std::cout << ... << args);
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+This is a binary left fold.
+
+i.e. the operator used acts as if it is left-associative. In this case it's
+obvious if you consider the type of ~std::cout~ - the fold expression must be
+grouping to the left.
+
+Most of our operators are left associative, and most of the time, if you don't
+care, you want this left-to-right grouping.
+#+END_NOTES
+
+** Fold expressions
+
+Choosing left- or right- fold is usually about commutativity rather than
+associativity.
+
+#+BEGIN_SRC c++
+template <typename Matrix, typename... Args>
+auto multiply_on_right(Matrix&& m, Args&&... args) {
+  return (m * ... * args);
+}
+
+template <typename Matrix, typename... Args>
+auto multiply_on_left(Matrix&& m, Args&&... args) {
+  return (args * ... * m);
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+Sometimes you do care. Usually the operation itself is associative (e.g. matrix
+multiplication) so it doesn't matter which way the pack is folded, except in the
+application to the initial argument. In this case it's not commutative - so it's
+different whether we apply our transformation by multiplying on the left or the
+right.
+#+END_NOTES
+
+** Fold expressions
+Unary fold expressions also exist...
+
+But are mostly useful with operators that shouldn't really be overloaded.
+
+#+BEGIN_NOTES
+I'm not going to dwell on unary folds, although they exist too, because they are
+most usefully used with logical and, logical or, and comma operators, and it's
+generally not advisable to overload those operators.
+#+END_NOTES
+
+** New evaluation semantics
+
+C++17 changed semantics for overloading:
+ - ~operator&&~
+ - ~operator||~
+ - ~operator,~
+
+/Evaluation order guarantees/ P0145
+
+#+BEGIN_NOTES
+Why? Well let's briefly cover how C++17 changed them, in case you have to deal
+with code that overloads them.
+
+It was long the case in C++ that the order of evaluation of arguments to a
+function (or operator) is indeterminate. That is still true in most cases.
+
+However, P0145 changed that for these three operators. Since C++17 these three
+operators evaluate their operands in left-to-right sequence, even when
+overloaded.
+
+But note: ~operator&&~ and ~operator||~ still don't short circuit when
+overloaded!
+#+END_NOTES
+
+** Operators in C++17
+
+ - Associativity is important for leveraging fold expressions
+ - Non-commutativity affects the choice of fold
+ - You probably still don't want to mess with ~&&~ ~||~ and ~,~
+
+#+BEGIN_NOTES
+Unlocking fold expressions is a great reason to use operator overloading (as
+opposed to the other choice of using ~std::accumulate~) especially if your
+operator is not commutative. Because it's more of a pain to write a right-fold
+with ~std::accumulate~ and reverse iterators.
+#+END_NOTES
+
+** Right-fold, old-style
+Something like this.
+#+BEGIN_SRC c++
+// Assuming we have a class Foo with a non-commutative operation
+
+struct right_multiplies {
+  template <typename T>
+  T operator()(T t1, T t2) const {
+    return operation(t2, t1);
+  }
+};
+
+template <template <class> typename Container = std::initializer_list>
+Foo right_fold_old(Foo init, Container<Foo> c) {
+    return std::accumulate(std::crbegin(c), std::crend(c), init, right_multiplies{});
+}
+
+auto sum = right_fold_old(foo_init, {foo1, foo2, foo3});
+#+END_SRC
+
+#+BEGIN_NOTES
+Here's what we had to do to write a right-fold before C++17.
+
+Something like this. The right-multiplies is a class we need to write to apply
+the operator the right way around. If we want this to be generic, we'd also need
+to pass ~operation~ to right_multiplies as a template argument. And we need to
+use reverse iterators, and we need to deal with a container. The call site is
+not as nice as it could be.
+
+If you don't use operator overloading, right-folds are a real pain.
+
+But if you do use operators...
+#+END_NOTES
+
+** Right-fold, new-style
+Something like this.
+#+BEGIN_SRC c++
+// Assuming we have a class Foo with a non-commutative operator*
+
+template <typename... Args>
+Foo right_fold_new(Foo init, Args&&... args) {
+    return (args * ... * init);
+}
+
+auto sum = right_fold_new(foo_init, foo1, foo2, foo3);
+#+END_SRC
+
+#+BEGIN_NOTES
+It's much nicer. It's much clearer in intent.
+
+So much for C++17, let's have a little look at what's coming in C++20.
+#+END_NOTES
+
+* New in C++20
+
+We get a whole new operator!
+
+The three-way comparison operator.
+
+~operator<=>~
+
+AKA "the spaceship operator". [expr.spaceship]
+
+#+BEGIN_NOTES
+You've probably heard something about this.
+
+It's designed to provide a three-way comparison on x and y: something like
+strcmp does. So informally, if x is less than y, return less than zero, if x
+equals y, return zero, if x is greater than y, return greater than zero.
+
+Disclaimer: everything in this section is very new - so new it's not yet
+implemented in some cases. I'm going to try to tell you about what I think I
+know so far.
+#+END_NOTES
+
+** ~operator<=>~ 101
+
+~#include <compare>~ to get 5 types [cmp.categories]:
+
+ - ~std::strong_equality~
+ - ~std::weak_equality~
+
+ - ~std::strong_ordering~
+ - ~std::weak_ordering~
+
+ - ~std::partial_ordering~
+
+A call to ~operator<=>~ returns a value of one of these types.
+
+#+BEGIN_NOTES
+~operator<=>~ is designed to replace all the equality and ordering operators we
+have today. A type that defines ~operator<=>~
+
+Strong vs weak here is what the standard calls substitutability: the idea that
+if x has a relation to y, f(x) has that same relation to f(y).
+
+I've got some examples of each type here to help understand.
+#+END_NOTES
+
+** Equality
+
+~std::strong_equality~ means values that are ~equal~ are indistinguishable.
+
+#+BEGIN_SRC c++
+std::strong_equality operator<=>(std::type_info a, std::type_info b);
+#+END_SRC
+
+~std::weak_equality~ means values that are ~equivalent~ may be distinguishable.
+
+#+BEGIN_SRC c++
+std::weak_equality operator<=>(std::filesystem::path a, std::filesystem::path b);
+#+END_SRC
+
+#+BEGIN_NOTES
+Disclaimer: these examples & relations aren't actually in the standard (yet).
+They're just examples.
+
+std::type_info has no ordering, but does have strong equality.
+
+It's actually pretty difficult to find weak_equality types in the standard.
+Filesystem paths may be equivalent in the sense that they refer to the same
+object on disk, but they may differ because they may be relative or absolute,
+and contain extraneous .. components or the like.
+
+(When we put this in the standard, we may decide that paths have an ordering
+because they "are" strings... I'm not sure that would be right.)
+#+END_NOTES
+
+** Ordering
+
+A /total/ ordering means exactly one of the following is true:
+ - a > b
+ - a == b
+ - a < b
+
+~std::strong_ordering~ is a total ordering /with/ substitutability.
+
+#+BEGIN_SRC c++
+template <typename T>
+std::strong_ordering operator<=>(typename std::vector<T>::iterator a,
+                                 typename std::vector<T>::iterator b);
+#+END_SRC
+
+~std::weak_ordering~ is a total ordering /without/ substitutability.
+#+BEGIN_SRC c++
+std::weak_ordering operator<=>(const CIString& a, const CIString& b);
+#+END_SRC
+
+#+BEGIN_NOTES
+Of course the iterators have to be into the same vector; there are preconditions
+here.
+
+Probably not many examples of ~weak_ordering~ in the standard either. Case
+insensitive strings is a possible example.
+#+END_NOTES
+
+** Ordering
+
+~std::partial_ordering~ means it's possible that none of the following is true:
+ - a > b
+ - a == b
+ - a < b
+
+#+BEGIN_SRC c++
+std::partial_ordering operator<=>(float a, float b);
+#+END_SRC
+
+#+BEGIN_NOTES
+Perhaps the canonical example of a partial order is float, because of the
+presence of NaNs.
+
+So with all this, how does using the spaceship operator have the potential to
+change things? Let's look at a representative bit of code.
+#+END_NOTES
+
+** Case study: Last year's SCM Challenge
+
+Challenge: write a case insensitive string class that implements\\
+all 6 comparison operations.
+
+#+BEGIN_SRC c++
+struct ci_compare_equal {
+    bool operator()(char x, char y) const {
+        return std::toupper(x) == std::toupper(y);
+    }
+};
+struct ci_compare_less {
+    bool operator()(char x, char y) const {
+        return std::toupper(x) < std::toupper(y);
+    }
+};
+
+inline bool operator==(const CIString& x, const CIString& y) {
+    return std::equal(x.s.cbegin(), x.s.cend(),
+        y.s.cbegin(), y.s.cend(), ci_compare_equal{});
+}
+inline bool operator<(const CIString& x, const CIString& y) {
+    return std::lexicographical_compare(x.s.cbegin(), x.s.cend(),
+        y.s.cbegin(), y.s.cend(), ci_compare_less{});
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+This was the Stevens Capital Management challenge that was at last year's
+CppCon. Here's more or less how I solved part of it.
+
+The ci_compare_equal and ci_compare_less here were just structs with a function
+call operator that do the obvious thing.
+
+Anyway, once we have these two operators, we can implement the rest.
+#+END_NOTES
+
+** Case study - continued
+
+#+BEGIN_SRC c++
+inline bool operator!=(const CIString& x, const CIString& y) {
+    return !(x == y);
+}
+
+inline bool operator>(const CIString& x, const CIString& y) {
+    return y < x;
+}
+
+inline bool operator<=(const CIString& x, const CIString& y) {
+    return !(y < x);
+}
+
+inline bool operator>=(const CIString& x, const CIString& y) {
+    return !(x < y);
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+The canonical way to implement the comparison operators.
+
+Note that we never do more than one operation (and possibly a not). e.g. When we
+do ~operator<=~, we don't actually test ~operator<~ and ~operator==~.
+
+You can copy-paste these with your own types, or template them: they never
+change (prior to C++20).
+
+Also note that all the comparison operators are free functions. I prefer to
+write them this way because it puts the two arguments on an equal footing and
+makes for better symmetry. And ~operator==~ and ~operator<~ are friends only if
+they need to be. (The rest never need to be.)
+#+END_NOTES
+
+** So how did this change with C++20?
+
+#+BEGIN_SRC c++
+inline std::weak_ordering operator<=>(const CIString& x, const CIString& y) {
+    return std::lexicographical_compare_3way(
+        x.s.cbegin(), x.s.cend(), y.s.cbegin(), y.s.cend(),
+        [] (char x, char y) {
+            const auto diff = std::toupper(x) - std::toupper(y);
+            return diff < 0 ? std::weak_ordering::less :
+              diff > 0 ? std::weak_ordering::greater :
+              std::weak_ordering::equivalent;
+        });
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+This operator now does everything. We're using the new
+~lexicographical_compare_3way~ algorithm which in turn uses a 3-way comparison
+function. Notice that the lambda returns a value of type ~std::weak_ordering~.
+We could make ~operator<=>~ return ~auto~ if we wanted.C++20 gives us the
+ability to use a non-capturing lambda here because now they can be
+default-constructed.
+
+But there's a problem here. What is it? This function does everything, but it
+doesn't do equality efficiently. If we want that we still need to write it the
+old way - and we can still provide ~operator==~ and ~operator!=~. Unfortunately
+there's no ~std::equal_3way~ yet.
+#+END_NOTES
+
+** ~operator<=>~ guidelines
+
+ It's too new to switch to it yet (obviously - it's C++20).
+
+ - library support is only just being figured out
+ - no real implementations yet
+ - issues with generic code/composition have to be worked out
+ - perf pitfalls with sequence containers + naive usage
+
+#+BEGIN_NOTES
+Clearly there is some way to go yet on figuring out the rough edges of this
+operator. It's very new.
+#+END_NOTES
 
 * Straying from Convention
 
@@ -565,71 +1001,374 @@ is," said Humpty Dumpty, "which is to be master—that's all.”
 #+REVEAL_HTML: </div>
 #+END_QUOTE
 
+#+BEGIN_NOTES
+So we've talked about being conventional with operators. Now let's talk about
+what we can gain from breaking from the mold. Let's have some fun.
+#+END_NOTES
+
 ** DSLs
+
+The primary use of a DSL is in the construction of (otherwise) complex objects.
+
+ - terser
+ - simpler
+ - manipulable
+
+The use of template expressions may also provide performance gains.
+
+UDLs are a natural fit for DSLs.
+
+#+BEGIN_NOTES
+DSLs are where operators work together with types to make code easier to
+understand.
+
+Typically they shine where the objects and classes you want to construct are not
+difficult to understand (you never want that), but where it would be
+prohibitively wordy to construct them. We're trying to achieve readability.
+#+END_NOTES
+
+** Readability
+
+#+BEGIN_SRC c++
+std::vector<int> v;
+v.reserve(5);
+v.push_back(1);
+v.push_back(2);
+v.push_back(3);
+v.push_back(4);
+v.push_back(5);
+#+END_SRC
+vs
+#+BEGIN_SRC c++
+std::vector<int> v{1,2,3,4,5};
+#+END_SRC
+
+#+BEGIN_NOTES
+We have the square-brackets operator, and the parens operator; here we have the
+curly brackets/braces operator! initializer_list is a DSL for initialization.
+
+This is why we want DSLs: they give us easier to read, declarative code. When we
+overload operators, we allow the users of our library to form expressions rather
+than having to sequence statements.
+#+END_NOTES
 
 ** ~chrono~ dates
 
+A DSL with one operator and two UDLs.
+
+#+BEGIN_SRC c++
+using namespace std::chrono;
+
+constexpr auto today_us = September/25/2018;
+constexpr auto today_uk = 25d/September/2018;
+constexpr auto today = 2018y/September/25;
+#+END_SRC
+
+#+BEGIN_NOTES
+~chrono~ provides us with the only possible defence of using the US system for
+writing dates: it's one character fewer.
+
+Consider alternative ways of constructing dates and they all end up using
+operators (mostly operator+), and being much more verbose. So the use of
+~operator/~ works really well, especially together with the UDLs.
+
+It's not "mathematically conventional" but it is datewise-conventional.
+#+END_NOTES
+
+** ~filesystem::path~
+
+A DSL with one operator.
+
+#+BEGIN_SRC c++
+using namespace std::filesystem;
+
+auto home_prefix = path{"/home"};
+auto my_home_dir = home_prefix / "bdeane";
+#+END_SRC
+
+#+BEGIN_NOTES
+Another non-conventional operator, but it works brilliantly. There's no
+confusion with division here. It's taking what we already do with strings -
+concatenation - and making it easier.
+
+I've spent far too much of my life dealing with the presence or absence of
+trailing slashes in path names. ~operator/~ just does the right thing.
+#+END_NOTES
+
 ** [Boost.]SML
+(Disclaimer: SML isn't a Boost library)
 
-* Notes
+#+BEGIN_SRC c++
+struct tcp_release final {
+  auto operator()() const {
+    using namespace sml;
+    return make_transition_table(
+      *"established"_s + event<release>          / send_fin  = "fin wait 1"_s,
+       "fin wait 1"_s  + event<ack> [ is_valid ]             = "fin wait 2"_s,
+       "fin wait 2"_s  + event<fin> [ is_valid ] / send_ack  = "timed wait"_s,
+       "timed wait"_s  + event<timeout>                      = X
+    );
+  }
+};
+#+END_SRC
 
-#include <algorithm>
-#include <compare>
-#include <iostream>
-#include <string>
-#include <type_traits>
+#+BEGIN_NOTES
+There's a lot going on here. This is a concise definition of a state machine.
+We've got a UDL, a constant, and five different operator overloads working
+together. There is a lot of type machinery in the background, but the result is
+readable.
 
-namespace std {
+It's also very malleable. This is what operators give us: readability, yes, but
+more so, easy manipulation. Adding a state or changing a state is easy here
+because the terse, transparent syntax makes it easy to reason about the state
+machine.
 
-template< class InputIt1, class InputIt2, class Cmp >
-constexpr auto lexicographical_compare_3way( InputIt1 b1, InputIt1 e1,
-                                             InputIt2 b2, InputIt2 e2,
-                                             Cmp comp)
--> std::common_comparison_category_t<decltype(comp(*b1, *b2)), std::strong_ordering>;
-}
+Let's think about choices we could have made in operators here. (The operators
+follow UML syntax.) If you want to know more, see Kris's talk at 9am Wed.
+#+END_NOTES
 
-class CIString {
-	std::string s;
+** Operators and Monads
 
-public:
-	CIString(std::string _s): s(_s) {};
+What's the biggest problem with monads?
 
-    // functions want to be free!
-    friend inline std::strong_ordering operator<=>(const CIString& x, const CIString& y);
+#+ATTR_REVEAL: :frag (appear)
+ - understanding them?
+ - explaining them?
+ - CT wonks?
+ - the sudden urge to try to make everything monadic?
+
+#+BEGIN_NOTES
+Monads are cropping up in a few places now. ~std::optional~, ~std::expected~,
+~std::future~...
+
+None of these things.
+
+This is a talk about operators...
+#+END_NOTES
+
+** The main problem with monads
+
+In C++, ~operator>>=~ is /right associative/!
+
+What operator overloads are we going to use is we want to compose things
+monadically?
+
+#+BEGIN_NOTES
+Monads make a lot of sense for modelling some things. But which operators should
+we use for monadic operations?
+
+In C++ there aren't many good choices. And this goes back to the top of the talk.
+#+END_NOTES
+
+** Operator overloading and futures
+#+REVEAL_HTML: <div class='vertspace2'></div>
+#+REVEAL_HTML: <img src='futures.svg'/>
+#+BEGIN_SRC c++
+// imaginary-ish code
+my_future<A> f(X);
+my_future<B> g1(A);
+my_future<C> g2(A);
+my_future<D> h(B, C);
+#+END_SRC
+
+#+BEGIN_NOTES
+Imagine a simple composition of asynchronous functions that return futures.
+
+Notice that their composition can itself be viewed as a function from X to
+future<D>.
+
+I'm not making any assumptions about how ~my_future~ is implemented here.
+#+END_NOTES
+
+** Operator Overloading and Futures
+#+REVEAL_HTML: <div class='vertspace2'></div>
+#+ATTR_REVEAL: :frag appear
+#+BEGIN_SRC c++
+auto fut = f();
+auto split1 = fut.then(g1);
+auto split2 = fut.then(g2);
+auto fut2 = when_all(split1, split2).then(h);
+#+END_SRC
+#+ATTR_REVEAL: :frag appear
+#+BEGIN_SRC c++
+auto fut = f() >= (g1 & g2) >= h;
+#+END_SRC
+#+ATTR_REVEAL: :frag appear
+Operator overloading can clarify the computational structure when combining
+futures/promises.
+
+#+BEGIN_NOTES
+Here's again why operators are important: when we can use operators to compose
+futures, it becomes easier to see the computational structure of the
+composition.
+
+Business logic vs mechanism of concurrency vs strategy of parallelism.
+
+The question is, what to use for an operator. This is one of the real problems
+with operator overloading: lack of choice almost forces lack of conventionality.
+
+I don't have a good sense of what will become conventional in monadic
+operations, if anything, but I don't think this is a bad way to go.
+#+END_NOTES
+
+* Mechanics
+
+#+BEGIN_NOTES
+Now I want to cover a few mechanics of writing operator overloads, choices and
+preferences.
+#+END_NOTES
+
+** Free or not?
+
+#+BEGIN_SRC c++
+struct Foo {
+  Foo operator+(const Foo& other);
+};
+#+END_SRC
+
+#+BEGIN_SRC c++
+struct Foo {
 };
 
-struct ci_compare_less
-{
-    std::strong_ordering operator()(char x, char y) const
-    {
-        const auto diff = std::toupper(x) - std::toupper(y);
-        return diff < 0 ?
-          std::strong_ordering::less :
-          diff > 0 ?
-            std::strong_ordering::greater :
-            std::strong_ordering::equivalent;
-    }
+Foo operator+(const Foo& x, const Foo& y);
+#+END_SRC
+
+#+BEGIN_NOTES
+First question: which should you prefer, and why?
+
+Normal rules apply: prefer a free function if you can. Free functions promote
+encapsulation: keeping the basis functions of your class minimal, complete and
+stable is desirable, and building further convenience with free functions
+promotes encapsulation: relying on the class interface and not the
+implementation.
+
+Free functions also have the slightly more nuanced advantage that they put their
+operands on an "equal footing" mentally. This is more natural to think about
+especially in the case of a commutative operation.
+#+END_NOTES
+
+** Free and non-free
+
+#+BEGIN_SRC c++
+struct Foo {
+  Foo& operator+=(const Foo& other);
 };
 
-// operator<=>
-inline std::strong_ordering operator<=>(const CIString& x, const CIString& y)
-{
-    return std::lexicographical_compare_3way(x.s.cbegin(), x.s.cend(),
-        y.s.cbegin(), y.s.cend(), ci_compare_less{});
+Foo operator+(const Foo& x, const Foo& y) {
+  Foo r{x};
+  r += y;
+  return r;
 }
+#+END_SRC
 
-// You can use this function to write any tests you may want.
-auto tests() {
-    using namespace std::literals;
-    auto s1 = "HELLO, WORLD1"s;
-    auto s2 = "hello, world2"s;
+#+BEGIN_NOTES
+Binary operators generally should be implemented in terms of their assignment
+counterparts. This is part of providing a complete set of operators and is an
+application of the DRY principle.
 
-    auto lhs = std::is_lt(CIString{s1} <=> s2);
-    auto rhs = std::is_lt(s1 <=> CIString{s2});
+In fact, the "operator assignment" operators need not be member functions. I
+don't know why. Plain ~operator=~ has to be a member function.
+#+END_NOTES
 
-    return lhs && rhs;
-};
+** Don't forget qualifiers
 
-int main() {
-	return tests();
-}
+Operators are functions, so you should apply all the normal rules of writing
+functions.
+
+ - ~constexpr~
+ - ~const~
+ - ~noexcept~
+ - parameter types
+ - return type
+
+#+BEGIN_NOTES
+Hopefully this is all obvious. Think about parameter types. Think about the
+return type. Qualify appropriately.
+
+This slide is of course a talk in its own right.
+#+END_NOTES
+
+* Guidelines Redux
+
+Let's recap.
+
+** When to use operator overloading
+
+Use operators when:
+#+ATTR_REVEAL: :frag (appear)
+ - you have a natural binary function that combines your types
+ - your types obey mathematical principles (associativity, etc)
+ - you want users to be able to manipulate expressions
+ - you want to make complex construction easier
+ - you want users to intuit properties of your types
+
+#+BEGIN_NOTES
+Don't force things.
+
+Do exploit the power that operators give to you as an implementer and to your
+users.
+#+END_NOTES
+
+** When not to use operator overloading
+
+Don't use (only) operators when:
+#+ATTR_REVEAL: :frag (appear)
+ - you can provide better perf with an n-ary function
+ - they aren't yet ready for primetime (~operator<=>~)
+
+#+BEGIN_NOTES
+This is one of the most important points against dogmatic operator overloading.
+Compilers can't collapse multiple binary operations into an n-ary operation. If
+you can, and it's important to you for better performance, by all means provide
+that interface. Don't /constrain/ your users to only binary operations.
+
+As far as the spaceship operator goes, watch this space. I think it needs to
+evolve a bit more. Which is fair enough.
+#+END_NOTES
+
+** Don't
+
+#+ATTR_REVEAL: :frag (appear)
+ - break contrariety of ~operator==~ and ~operator!=~
+ - break associativity
+ - be afraid to overload just one operator, if it makes sense (~operator/~)
+ - overload ~operator&&~ ~operator||~ ~operator,~ even with P0145
+ - pick weird operators if your type /is/ mathematical
+
+#+BEGIN_NOTES
+P0145: remember you don't get short circuit behaviour with && and ||.
+
+And there is no good convention for the comma operator that I know of.
+#+END_NOTES
+
+** Do
+#+ATTR_REVEAL: :frag (appear)
+ - use conventions /other/ than mathematical ones
+ - consider distinguishing your types to leverage affine spaces
+ - use operators for non-commutative operations to leverage fold expressions
+ - use UDLs as a counterpart to operators to help with construction
+ - provide the whole set of related operators if you provide one
+
+#+BEGIN_NOTES
+The technique of separating types is a really powerful one for clarifying your
+design. Even if you don't end up with an affine space, it's worth trying to
+separate types and see where it leads.
+
+Provide the complete set of operators (including all variations of types). It's
+just going to end up annoying people if you don't. Often, type variation means
+handling ~std::string~ and ~char *~ possibilities, and ~string_view~ can help
+here.
+#+END_NOTES
+
+* Thank you
+
+#+ATTR_REVEAL: :frag appear
+Questions?
+
+#+ATTR_REVEAL: :frag appear
++Comments thinly disguised as questions?+
+
+#+ATTR_REVEAL: :frag appear
+Pitchforks & torches?
+
+* Notes                                                            :noexport:
