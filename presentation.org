@@ -32,7 +32,6 @@
 * First: Operators I'm Not Talking About
 
  - conversions (e.g. ~operator int()~)
- - user-defined literals (e.g. ~operator ""_km~)
  - ~operator new~ and ~operator delete~
  - assignment
 
@@ -40,7 +39,11 @@ I'll mostly be talking about "mathematical" operators (arithmetic, bitwise,
 equality, etc).
 
 #+BEGIN_NOTES
-I'm going to be talking about /why/ we should embrace operator overloading.
+There are lots of things called "operators" in C++. I'm mostly going to be
+talking about the ones we first think of when we think of operator overloading,
+rather than exploring all the corners of what might be an operator.
+
+And I'm going to be talking about /why/ we should embrace operator overloading.
 #+END_NOTES
 
 * Operators in C++
@@ -790,7 +793,8 @@ A call to ~operator<=>~ returns a value of one of these types.
 
 #+BEGIN_NOTES
 ~operator<=>~ is designed to replace all the equality and ordering operators we
-have today. A type that defines ~operator<=>~
+have today. A type that defines ~operator<=>~ gets all the ordering and equality
+operators provided for it automatically by the compiler.
 
 Strong vs weak here is what the standard calls substitutability: the idea that
 if x has a relation to y, f(x) has that same relation to f(y).
